@@ -1,0 +1,22 @@
+/* ********************************************************************************
+ * All rights reserved.
+ ******************************************************************************* */
+package com.bccl;
+
+import java.util.Date;
+import java.util.Scanner;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        String time = in.next();
+        String[] tokens = time.split("\\:");
+        String current = tokens[tokens.length-1];
+        String mer = current.substring(current.length()-2);
+        int hours = Integer.parseInt(tokens[0]);
+        int minutes = Integer.parseInt(tokens[1]);
+        int seconds = Integer.parseInt(current.substring(0, current.length()-2));
+        System.out.println(seconds);
+    }
+}

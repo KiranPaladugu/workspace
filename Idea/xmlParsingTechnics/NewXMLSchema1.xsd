@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="simpleXmlElement" type="simpleXmlElement"/>
+
+  <xs:element name="student" type="student"/>
+
+  <xs:complexType name="jaxbRunner">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="subject">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="simpleXmlElement">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="value" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="subjects">
+    <xs:sequence>
+      <xs:element name="subject" type="subject" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="student">
+    <xs:sequence>
+      <xs:element name="address" type="address" minOccurs="0"/>
+      <xs:element name="age" type="xs:int"/>
+      <xs:element name="id" type="xs:int"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="section" type="xs:string" minOccurs="0"/>
+      <xs:element name="standard" type="xs:int"/>
+      <xs:element name="subjects" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="subject" type="subject" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="address">
+    <xs:sequence>
+      <xs:element name="house" type="xs:string" minOccurs="0"/>
+      <xs:element name="street" type="xs:string" minOccurs="0"/>
+      <xs:element name="city" type="xs:string" minOccurs="0"/>
+      <xs:element name="state" type="xs:string" minOccurs="0"/>
+      <xs:element name="zipcode" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

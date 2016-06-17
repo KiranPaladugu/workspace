@@ -1,0 +1,6 @@
+<plugin name="NodeConnector" className="com.tcs.tool.UI.NodeConnectorPlugin" version="1.0.0" id="">
+ <identifier>NodeConnector</identifier>
+ <plugin-type>Add-on</plugin-type>
+ <activatorMethod>startUIPlugin</activatorMethod>
+ <deactivatorMethod>stopPlugin</deactivatorMethod>
+</plugin>

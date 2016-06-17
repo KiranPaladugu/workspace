@@ -1,0 +1,53 @@
+1442146841911	Rename field 'satus'
+1442171017888	Extract method 'initDisplay'
+1442173130794	Extract method 'initDisplay'
+1442173823001	Encapsulate field 'parent'
+1442187009075	Rename local variable 'jarout'
+1442249761658	Encapsulate field 'saveRequired'
+1442250179670	Encapsulate field 'fileToSave'
+1442250183710	Encapsulate field 'window'
+1442250545563	Delete element
+1442250626412	Extract method 'performSaveOperation'
+1442264539474	Move compilation units
+1442264589762	Move compilation units
+1442264683567	Move compilation units
+1442264719280	Move compilation unit
+1442264744203	Move compilation unit
+1442264750774	Move compilation unit
+1442264764645	Move compilation unit
+1442265148713	Extract method 'performFindOpertion'
+1442265225657	Rename method 'performFindOpertion'
+1442265407782	Extract method 'init'
+1442266573474	Rename local variable 'arhive'
+1442266687265	Extract method 'performExitOperation'
+1442273968819	Encapsulate field 'version'
+1442275571398	Extract method 'performExitOperation'
+1442297115516	Encapsulate field 'folder'
+1442297279277	Rename method 'setFolder'
+1442351268578	Encapsulate field 'properties'
+1442354259602	Copy compilation unit
+1442354267064	Copy compilation unit
+1442354303126	Copy compilation unit
+1442354326886	Copy compilation units
+1442535830898	Encapsulate field 'start'
+1442535837086	Encapsulate field 'end'
+1442535887972	Rename field 'folder'
+1442535899703	Rename method 'isFolder'
+1442535944576	Encapsulate field 'nextSearchResult'
+1442536797084	Extract method 'updateResult'
+1442538704513	Move compilation unit
+1442538791740	Rename type 'ContentJarSearch'
+1442539429564	Rename local variable 'jarFile'
+1442539809748	Rename local variable 'jar'
+1442539897562	Rename local variable 'entry'
+1442539906089	Rename local variable 'entry'
+1442540271866	Extract method 'init'
+1442540616878	Rename local variable 'jarFile'
+1442540625015	Rename local variable 'jar'
+1442540631636	Rename local variable 'entry'
+1442542285235	Rename method 'isValidNameSearch'
+1442559130078	Rename local variable 'pos'
+1442625402525	Rename local variable 'searchString'
+1442626123130	Extract method 'searchNode'
+1442626142184	Rename local variable 'firstChild'
+1442646726610	Rename local variable 'treeNode'

@@ -1,0 +1,11 @@
+/* ********************************************************************************
+ * All rights reserved.
+ ******************************************************************************* */
+package com.tool.ssh;
+
+public class SSHConnection {
+
+    private int port;
+    private String host;
+    private String username;
+}

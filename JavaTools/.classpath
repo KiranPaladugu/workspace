@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="netconfConnector"/>
+	<classpathentry kind="src" path="nodeConnectorUI"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/jsch-0.1.53.jar" sourcepath="C:/Users/ekirpal/Desktop/dev/jsch-0.1.53/target/jsch-0.1.53-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/ekirpal/Desktop/dev/jsch-0.1.53/target/jsch-0.1.53-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

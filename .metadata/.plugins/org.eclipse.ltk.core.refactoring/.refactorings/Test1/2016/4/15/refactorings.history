@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;BlockingQueue.java&apos; to &apos;Idea/xmlParsingTechnics/com.dot.xml.parsing.tech&apos;&#x0D;&#x0A;- Original project: &apos;Test1&apos;&#x0D;&#x0A;- Destination element: &apos;Idea/xmlParsingTechnics/com.dot.xml.parsing.tech&apos;&#x0D;&#x0A;- Original element: &apos;com.pack.test.BlockingQueue.java&apos;" description="Copy compilation unit" destination="=Idea/xmlParsingTechnics&lt;com.dot.xml.parsing.tech" element1="/src&lt;com.pack.test{BlockingQueue.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1460158400216" units="1" version="1.0"/>
+</session>

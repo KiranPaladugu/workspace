@@ -1,0 +1,38 @@
+/* ********************************************************************************
+ * All rights reserved.
+ ******************************************************************************* */
+package com.pack.test;
+
+public class ThreadExample implements Runnable{
+
+    private Object obj;
+    /**
+     * 
+     */
+    public ThreadExample(Object obj) {
+        this.obj = obj;
+    }
+    private static int count = 1;
+    @Override
+    public void run() {
+        Thread.currentThread().setName("Thread-"+count++);
+        for(int i=0;i<25;i++){
+            System.out.println(getThreadName()+" - executing:"+i);
+            System.out.println(getThreadName()+" Waiting on Object");            
+            try {
+                if(count%4==0){
+                    obj.notify();
+                }
+                obj.wait();
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    public String getThreadName(){
+        return Thread.currentThread().getName();
+    }
+
+}

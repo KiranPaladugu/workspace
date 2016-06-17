@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="MessageTemplet" abstract="true">
+	<property name="message" ref="SampleString"></property>
+	</bean>
+	
+	<bean id="SampleString" class="java.lang.String">
+	<constructor-arg type="java.lang.String" value="SampleString" />
+	</bean>
+	
+	<bean id="helloWorld" class="com.dot.spring.test.bean.HelloWorld"
+		init-method="init" destroy-method="destroy" parent="MessageTemplet">
+	</bean>
+
+	<bean id="BeanNameTest" class="com.dot.spring.test.bean.BeanAnnotationTest">
+		<property name="beanName" value="this is my BeanName"></property>
+	</bean>
+
+	<bean id="lifeTest" class="com.dot.spring.test.bean.LifeCycleControllableBean"
+		init-method="init" destroy-method="destroy" parent="helloWorld">
+	</bean>
+</beans>

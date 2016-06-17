@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;lenght&apos; in &apos;com.pack.dot.SprialMatrix.printMatrix(...)&apos; to &apos;length&apos;&#x0D;&#x0A;- Original project: &apos;Idea&apos;&#x0D;&#x0A;- Original element: &apos;com.pack.dot.SprialMatrix.printMatrix(int, int).lenght&apos;&#x0D;&#x0A;- Renamed element: &apos;lenght&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename local variable &apos;lenght&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;com.pack.dot{SprialMatrix.java[SprialMatrix~printMatrix~I~I@lenght!283!292!287!292!I!0!true" name="length" references="true" stamp="1461092960393" version="1.0"/>
+</session>

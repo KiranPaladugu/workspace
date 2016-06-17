@@ -1,0 +1,16 @@
+/* ********************************************************************************
+ * All rights reserved.
+ ******************************************************************************* */
+package com.tcs.pack.searchJar;
+
+import com.tcs.pack.utils.ArchiveExtractor;
+
+public class ExtractAndLinkJar {
+	/**
+	 * 
+	 */
+	public ExtractAndLinkJar(Result parent,Result jarToExtract) {
+		ArchiveExtractor extractor = new ArchiveExtractor();
+	}
+
+}

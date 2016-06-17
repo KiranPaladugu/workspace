@@ -1,0 +1,62 @@
+/* ********************************************************************************
+ * All rights reserved.
+ ******************************************************************************* */
+package com.tool.ssh;
+
+import com.jcraft.jsch.*;
+
+public class TestSSCH {
+    public static void main(String args[]){
+        JSch sch = new JSch();
+        String userName = "ekirpal";
+        String password = "kiran";
+        String host = "10.126.139.36";
+        int port =22;
+        
+        try {
+            Session session = sch.getSession(userName, host, port);
+            session.setPassword(password);;
+            session.setTimeout(3000);
+            session.setUserInfo(new UserInfo() {
+                
+                @Override
+                public void showMessage(String message) {
+                    
+                }
+                
+                @Override
+                public boolean promptYesNo(String message) {
+                    return false;
+                }
+                
+                @Override
+                public boolean promptPassword(String message) {
+                    return true;
+                }
+                
+                @Override
+                public boolean promptPassphrase(String message) {
+                    return false;
+                }
+                
+                @Override
+                public String getPassword() {
+                    return null;
+                }
+                
+                @Override
+                public String getPassphrase() {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
+            });
+            session.connect();            
+            Channel channel = session.openChannel("Shell");
+            channel.setInputStream(System.in);
+            channel.setOutputStream(System.err);            
+            channel.connect();
+        } catch (JSchException e) {
+            e.printStackTrace();
+        }
+    }
+}

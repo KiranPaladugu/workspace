@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;com.pack.brick.models.BallCatcher&apos; to &apos;Bouncer&apos;&#x0D;&#x0A;- Original project: &apos;javaWork&apos;&#x0D;&#x0A;- Original element: &apos;com.pack.brick.models.BallCatcher&apos;&#x0D;&#x0A;- Renamed element: &apos;com.pack.brick.models.Bouncer&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Rename similarly named elements&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;BallCatcher&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/brickBreaker&lt;com.pack.brick.models{BallCatcher.java[BallCatcher" matchStrategy="1" name="Bouncer" qualified="false" references="true" similarDeclarations="true" stamp="1459201641588" textual="true" version="1.0"/>
+</session>

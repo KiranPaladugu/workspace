@@ -1,0 +1,115 @@
+/*------------------------------------------------------------------------------
+ *******************************************************************************
+ * COPYRIGHT Ericsson 2012
+ *
+ * The copyright to the computer program(s) herein is the property of
+ * Ericsson Inc. The programs may be used and/or copied only with written
+ * permission from Ericsson Inc. or in accordance with the terms and
+ * conditions stipulated in the agreement/contract under which the
+ * program(s) have been supplied.
+ *******************************************************************************
+ *----------------------------------------------------------------------------*/
+package com.tcs.pattern.observer;
+
+import java.util.*;
+import java.util.Observer;
+import java.util.concurrent.Semaphore;
+
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+
+import com.tcs.pack.search.ui.SearchTreeNode;
+import com.tcs.pack.searchJar.*;
+
+public class SearchResultUpdateHandler implements Observer {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+     */
+    /**
+     * 
+     */
+    private DefaultMutableTreeNode rootNode;
+    private JTree tree;
+    private Semaphore semaphore = new Semaphore(1);
+    private List<Message> errors;
+
+    public SearchResultUpdateHandler(DefaultMutableTreeNode rootNode, JTree tree, List<Message> errors) {
+        this.rootNode = rootNode;
+        this.tree = tree;
+        this.errors = errors;
+    }
+
+    @Override
+    public void update(Observable observableObj, Object change) {
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            //Avoid unsafe excecution..?
+            e.printStackTrace();
+        }
+        try {
+            if (rootNode != null && change instanceof SearchResult) {
+                SearchResult result = (SearchResult) change;
+                if (result != null && !result.isEmpty()) {
+                    SearchTreeNode node = new SearchTreeNode(result);
+                    List<Result> founds = result.getAllResults();
+                    for (Result found : founds) {
+                        SearchTreeNode nn = new SearchTreeNode(found);
+                        node.add(nn);
+                    }
+                    if (!result.getOtherResults().isEmpty()) {
+                        buildResultTree(result.getOtherResults(), node);
+                    }
+                    rootNode.add(node);
+                    updateTree();
+                    if (!rootNode.getUserObject().equals("Results")) {
+                        rootNode.setUserObject("Results");
+                    }
+                }
+                if(result.getErrors().size()>0){
+                    for(Message msg:result.getErrors()){
+                        errors.add(msg);
+                    }
+                    
+                }
+            }
+        } finally {
+            if (semaphore.availablePermits() <= 0) {
+                semaphore.release();
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    private void updateTree() {
+        ((DefaultTreeModel) tree.getModel()).reload();
+        tree.repaint();
+        tree.expandRow(0);
+    }
+
+    private void buildResultTree(List<SearchResult> results, SearchTreeNode rootNode) {
+        for (SearchResult result : results) {
+            if (result != null && !result.isEmpty()) {
+                SearchTreeNode node = new SearchTreeNode(result);
+                List<Result> founds = result.getAllResults();
+                for (Result found : founds) {
+                    SearchTreeNode nn = new SearchTreeNode(found);
+                    node.add(nn);
+                }
+                if (!result.getOtherResults().isEmpty()) {
+                    buildResultTree(result.getOtherResults(), node);
+                }
+                rootNode.add(node);
+                updateTree();
+
+            }
+        }
+    }
+
+}

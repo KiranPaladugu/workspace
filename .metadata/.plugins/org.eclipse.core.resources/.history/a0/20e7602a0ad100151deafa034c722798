@@ -1,0 +1,24 @@
+/* ********************************************************************************
+ * All rights reserved.
+ ******************************************************************************* */
+package com.tool.ssh;
+
+import com.jcraft.jsch.*;
+
+public class TestSSCH {
+    public static void main(String args[]){
+        JSch sch = new JSch();
+        String userName = "ekirpal";
+        String password = "kiran";
+        String host = "10.126.139.36";
+        int port =22;
+        
+        try {
+            Session session = sch.getSession(userName, host, port);
+            session.setPassword(password);;
+            session.setTimeout(3000);
+        } catch (JSchException e) {
+            e.printStackTrace();
+        }
+    }
+}

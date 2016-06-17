@@ -1,0 +1,98 @@
+/* ********************************************************************************
+ * All rights reserved.
+ ******************************************************************************* */
+package com.tcs.pack.utils;
+
+import java.io.*;
+import java.util.Enumeration;
+import java.util.UUID;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import com.tcs.pack.searchJar.AbstractArchiveSearch;
+import com.tcs.pack.serarch.Application;
+import com.tcs.pack.serarch.ApplicationContext;
+
+public class ArchiveExtractor {
+	
+	public File extractArchiveEntry(ZipEntry entry,ZipFile zipFile){		
+		File tmpFile = null;
+		while(tmpFile==null || tmpFile.exists()){
+			tmpFile = new File(getNewTmpFile());
+		}
+		try {
+			InputStream zipIn = zipFile.getInputStream(entry);
+			OutputStream out = new FileOutputStream(tmpFile);
+			int x = -1;
+			while((x=zipIn.read())!=-1){
+				out.write(x);
+			}
+			out.close();
+			zipIn.close();
+			return tmpFile;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public File extractArchiveEntry2(ZipEntry entry,ZipFile zipFile){		
+		File tmpFile = null;
+		while(tmpFile==null || tmpFile.exists()){
+			tmpFile = new File(getNewTmpFile());
+		}
+		try {
+			BufferedInputStream zipIn = new BufferedInputStream(zipFile.getInputStream(entry));
+			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
+			byte[] array = new byte[1024];
+			/*int x = -1;
+			while((x=zipIn.read())!=-1){
+				out.write(x);
+			}*/			
+			int lenght=-1;
+			while((lenght=zipIn.read(array))!=-1){
+				out.write(array, 0, lenght);
+			}
+			out.close();
+			zipIn.close();
+			return tmpFile;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String getNewTmpFile(){
+		UUID uuid = UUID.randomUUID();
+		String tmpnFileame= uuid.toString()+".arc";
+		String tmpFilePath =ApplicationContext.getApplicationTempDir()+File.separator+tmpnFileame;
+		return tmpFilePath;
+		
+	}
+	
+	public static void main(String args[]){
+		String fileName = "C:\\Users\\ekirpal\\Desktop\\Desk\\arquillian\\_DEFAULT__mediationServiceEar_mediation-service-ear-6.4.4.ear";
+		
+		try {
+			JarFile jarFile = new JarFile(new File(fileName));
+			Enumeration<JarEntry> entries = jarFile.entries();
+			while(entries.hasMoreElements()){
+				JarEntry entry = entries.nextElement();
+				if(AbstractArchiveSearch.isJavaArchive(entry.getName())){
+					System.out.println("Found a candidate to test !");
+					System.out.println("Seleted Candidate to test is : "+entry.getName());
+					ArchiveExtractor ext = new ArchiveExtractor();
+					File extracted = ext.extractArchiveEntry(entry, jarFile);
+					System.out.println("Extracted FILE: "+extracted);
+					System.out.println("Extracted FILE Location :"+extracted.getAbsolutePath());					
+				}
+			}
+			Application.CleanBeforeExit();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

@@ -1,0 +1,30 @@
+/* ********************************************************************************
+ * All rights reserved.
+ ******************************************************************************* */
+package com.tool.ssh;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class SSHConnection {
+
+    private int port;
+    private String host;
+    private String username;
+    private String password;
+    private Map<String,String> options = new HashMap<String,String>();
+    
+    /**
+     * @param port
+     * @param host
+     * @param username
+     * @param password
+     */
+    public SSHConnection(int port, String host, String username, String password) {
+        super();
+        this.port = port;
+        this.host = host;
+        this.username = username;
+        this.password = password;
+    }
+}

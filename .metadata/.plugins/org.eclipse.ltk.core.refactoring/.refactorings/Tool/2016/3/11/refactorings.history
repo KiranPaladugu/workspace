@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename method &apos;com.tcs.pack.serarch.ApplicationContext.clean()&apos; to &apos;cleanTmpDirs&apos;&#x0D;&#x0A;- Original project: &apos;Tool&apos;&#x0D;&#x0A;- Original element: &apos;com.tcs.pack.serarch.ApplicationContext.clean()&apos;&#x0D;&#x0A;- Renamed element: &apos;com.tcs.pack.serarch.ApplicationContext.cleanTmpDirs()&apos;&#x0D;&#x0A;- Update references to refactored element" delegate="false" deprecate="false" description="Rename method &apos;clean&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.method" input="/src&lt;com.tcs.pack.serarch{ApplicationContext.java[ApplicationContext~clean" name="cleanTmpDirs" references="true" stamp="1457647939742" version="1.0"/>
+</session>

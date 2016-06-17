@@ -1,0 +1,6 @@
+<plugin name="netconfNodeConnector" className="com.tcs.tools.NetconfNodeConnectorPlugin" version="1.0.0" id="">
+ <identifier>NodeConnector</identifier>
+ <plugin-type>Add-on</plugin-type>
+ <activatorMethod>startConnectorPlugin</activatorMethod>
+ <deactivatorMethod>shutDownConnectorPlugin</deactivatorMethod>
+</plugin>

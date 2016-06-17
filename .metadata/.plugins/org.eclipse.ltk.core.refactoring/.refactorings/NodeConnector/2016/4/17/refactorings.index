@@ -1,0 +1,4 @@
+1461285025523	Encapsulate field 'host'
+1461285030434	Encapsulate field 'port'
+1461286242543	Rename type 'SSHConnector'
+1461286469174	Rename method 'openConnection'

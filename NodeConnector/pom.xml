@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.tcs.ssh.netconf.connector</groupId>
+	<artifactId>NodeConnector</artifactId>
+	<version>1.0.1-SNAPSHOT</version>
+	<name>nodeConnector</name>
+	<dependencies>
+		<dependency>
+			<groupId>com.ericsson.oss.mediation</groupId>
+			<artifactId>maverick-1.6.5-session-provider-jar</artifactId>
+			<version>1.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>LATEST</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sshtools</groupId>
+			<artifactId>maverick-group</artifactId>
+			<version>1.6.5</version>
+			<classifier>all</classifier>
+		</dependency>
+	</dependencies>
+</project>

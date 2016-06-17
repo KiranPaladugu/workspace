@@ -1,0 +1,17 @@
+1438030914774	Encapsulate field 'actualName'
+1438039449783	Encapsulate field 'object'
+1438040113465	Encapsulate field 'name'
+1438040119655	Encapsulate field 'value'
+1438040421376	Rename method 'getFoundFiles'
+1438280402700	Copy compilation unit
+1438280462768	Copy compilation unit
+1438280478435	Copy compilation unit
+1438280486602	Copy compilation units
+1438299335041	Delete element
+1438299355328	Delete element
+1438385448191	Rename type 'Errors'
+1438385836478	Encapsulate field 'source'
+1438386002541	Rename type 'MessageType'
+1438386391797	Rename type 'ErrorViewWindow'
+1438386409316	Rename type 'TextViewDialog'
+1438387059928	Rename field 'lbl_currentSearch'

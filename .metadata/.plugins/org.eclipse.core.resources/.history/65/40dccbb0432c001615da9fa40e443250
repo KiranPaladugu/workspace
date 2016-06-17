@@ -1,0 +1,21 @@
+/* ********************************************************************************
+ * All rights reserved.
+ ******************************************************************************* */
+package com.bccl;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+//        String[] tokens = input.split("\\! |\\!|\\, |\\,|\\? |\\?|\\. |\\.|\\ |\\|\\_ |\\_|\\' |\\'|\\@ |\\@|\\s");
+        String[] tokens = input.split("[ !,?.\\_\'@]+");
+        System.out.println(tokens.length);
+        for(String token:tokens){
+            System.out.println(token);
+        }       
+        scanner.close();
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+    }
+}

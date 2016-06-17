@@ -1,0 +1,11 @@
+1463427384600	Delete elements
+1463428736780	Copy package
+1463433609961	Delete element
+1463443764389	Encapsulate field 'PLUGIN_MANAGER'
+1463446115306	Rename method 'getPluginLoader'
+1463446314017	Rename field 'pluingLoader'
+1463447029496	Encapsulate field 'name'
+1463447034847	Encapsulate field 'identifier'
+1463447039844	Encapsulate field 'id'
+1463447043384	Encapsulate field 'version'
+1463638997835	Move compilation unit

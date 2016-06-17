@@ -1,0 +1,5 @@
+1445284867499	Encapsulate field 'nameToInclude'
+1445284874148	Encapsulate field 'file'
+1445287955166	Rename local variable 'packageName'
+1445448771280	Extract method 'getExtension'
+1445452255641	Rename local variable 'out'
