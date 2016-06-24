@@ -14,6 +14,7 @@ public class ResponseHandler implements Runnable {
 
     private SSHConnection connection;
     private BlockingQueue<Message<String>> messageQueue;
+    private Thread t;
 
     /**
      * @param messageQueue
@@ -22,8 +23,11 @@ public class ResponseHandler implements Runnable {
     public ResponseHandler(SSHConnection connection, BlockingQueue<Message<String>> messageQueue) {
         this.connection = connection;
         this.messageQueue = messageQueue;
-        Thread t = new Thread(this);
+        t = new Thread(this);
         t.setName(connection.getUsername() + "@" + connection.getHostname() + " - " + this.getClass().getSimpleName());
+    }
+
+    public void startHandler() {
         t.start();
     }
 
@@ -56,13 +60,14 @@ public class ResponseHandler implements Runnable {
                     } else {
                         int index = -1;
                         if ((index = buffer.toString().lastIndexOf(connection.getEndOfSatement())) != -1) {
-                            String remainingmsg = buffer.substring(index+connection.getEndOfSatement().length(), buffer.length());
-                            pushReadMessage(buffer.substring(0, index+connection.getEndOfSatement().length()));
+                            String remainingmsg = buffer.substring(index + connection.getEndOfSatement().length(),
+                                    buffer.length());
+                            pushReadMessage(buffer.substring(0, index + connection.getEndOfSatement().length()));
                             connection.recievedMessage++;
                             buffer = new StringBuffer();
-                            if(!remainingmsg.trim().equals("")){
+                            if (!remainingmsg.trim().equals("")) {
                                 buffer.append(remainingmsg);
-                                System.out.println("Appending reamining:"+remainingmsg);
+                                System.out.println("Appending reamining:" + remainingmsg);
                             }
                         }
                     }

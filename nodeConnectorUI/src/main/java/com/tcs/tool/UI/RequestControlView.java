@@ -5,6 +5,7 @@ package com.tcs.tool.UI;
 
 import java.awt.GridLayout;
 import java.awt.event.*;
+import java.io.*;
 import java.util.List;
 import java.util.Vector;
 
@@ -12,6 +13,8 @@ import javax.swing.*;
 
 import com.tcs.application.*;
 import com.tcs.tools.Message;
+import com.tcs.tools.Request;
+import com.tcs.tools.UI.utils.LayoutUtils;
 import com.tcs.tools.UI.utils.UIConstants;
 import com.tcs.tools.resources.ResourceLocator;
 
@@ -133,6 +136,8 @@ public class RequestControlView extends ControlPanel implements Subscriber {
             }
             connectionStatus.setIcon(ResourceLocator.getImageIcon("On.png"));
             connectionStatus.setToolTipText("Online");
+            sendOnConnectMessages();
+            Application.getSubscriptionManager().notifySubscriber(txt_Reset);
             break;
         case UIConstants.DICONNECTED:
             if (animator != null) {
@@ -211,6 +216,46 @@ public class RequestControlView extends ControlPanel implements Subscriber {
         default:
             System.out.println("Unmanaged Event :" + event.getEvent() + " Caller is " + event.getCaller());
             break;
+        }
+    }
+
+    /**
+     * 
+     */
+    private void sendOnConnectMessages() {
+        System.out.println("Load message to send on connection...");
+        InputStream inputStream = Application.getResourceResolver().getResourceAsStream("HelloMessage");
+        if(inputStream!=null){
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line = null;
+            try {
+                StringBuffer buffer = new StringBuffer();
+                while((line=reader.readLine())!=null){
+                    if(line.trim().equals("")){
+                        pushRequest(buffer.toString());
+                        buffer = new StringBuffer();
+                    }else{
+                        buffer.append(line+"\n");
+                    }
+                }
+                if(buffer.length()>0){
+                    pushRequest(buffer.toString());
+                }
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+    }
+
+    /**
+     * 
+     */
+    private void pushRequest(String message) {
+        if(message.length()>0){
+            System.out.println(String.format("Pushing message as request on connect: %s", message));
+            Application.getSubscriptionManager().notifySubscriber(UIConstants.SEND_REQUEST, this, new Request<String>(message));
         }
     }
 

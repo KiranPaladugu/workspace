@@ -1,4 +1,3 @@
-com\tcs\tool\UI\LayoutUtils.class
 com\tcs\tool\UI\RequestControlView$4.class
 com\tcs\tool\UI\TabbedView.class
 com\tcs\tool\UI\NodeConnectorPlugin.class
@@ -11,6 +10,7 @@ com\tcs\tool\UI\NewCoustomMessageView.class
 com\tcs\tool\UI\SMenuItem.class
 com\tcs\tool\UI\RequestControlView$1.class
 com\tcs\tool\UI\RequestControlView$3.class
+com\tcs\tools\UI\utils\LayoutUtils.class
 com\tcs\tool\UI\ConnectionView$1.class
 com\tcs\tool\UI\HistoryView.class
 com\tcs\tool\UI\SessionView.class

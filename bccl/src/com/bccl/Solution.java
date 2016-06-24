@@ -3,8 +3,7 @@
  ******************************************************************************* */
 package com.bccl;
 
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 public class Solution {
 
@@ -20,14 +19,13 @@ public class Solution {
 
     public static void sort(int[] arr) {
         int pivote = arr[arr.length - 1];
-        int lastSmallIndex = -1;
-        int bigIndex = -1;
+        int bigArray[] = new int[arr.length];
+        int smallArray[] = new int[arr.length];
+        int bigIndex=0;
+        int smallIndex=0;
         for (int i = 0; i < arr.length; i++) {
             if (arr[i] > pivote) {
-                bigIndex = i;
-                if (lastSmallIndex != -1) {
-
-                }
+               
                 //This Element has to be moved after pivote.
             } else if (arr[i] < pivote) {
                 //This Elemnt has to moved before.
@@ -36,7 +34,7 @@ public class Solution {
         }
     }
 
-    public static int[] swap(int one, int two, int index1, int index2,int[] arr) {
+    public static int[] swap(int index1, int index2,int[] arr) {
        int temp = arr[index1];
        arr[index1] = arr[index2];
        arr[index2] = temp;

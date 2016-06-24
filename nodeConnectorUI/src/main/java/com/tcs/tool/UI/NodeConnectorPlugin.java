@@ -4,6 +4,7 @@
 package com.tcs.tool.UI;
 
 import com.tcs.application.*;
+import com.tcs.application.pluign.PluginManager;
 
 public class NodeConnectorPlugin implements Plugin, Subscriber {
 
@@ -36,7 +37,7 @@ public class NodeConnectorPlugin implements Plugin, Subscriber {
                 e.printStackTrace();
             }*/
             started = true;
-            Application.getSubscriptionManager().notifySubscriber(Application.PLUGIN_STATED, this);
+            Application.getSubscriptionManager().notifySubscriber(PluginManager.PLUGIN_STARTED, this);
         }
     }
     
@@ -86,6 +87,38 @@ public class NodeConnectorPlugin implements Plugin, Subscriber {
     @Override
     public String getIdentifier() {
         return identifier;
+    }
+
+    /* (non-Javadoc)
+     * @see com.tcs.application.Plugin#getVersion()
+     */
+    @Override
+    public String getVersion() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see com.tcs.application.Plugin#getClassName()
+     */
+    @Override
+    public String getClassName() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see com.tcs.application.Plugin#getActivatorMethod()
+     */
+    @Override
+    public String getActivatorMethod() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see com.tcs.application.Plugin#getDeActivatorMethod()
+     */
+    @Override
+    public String getDeActivatorMethod() {
+        return null;
     }
 
 }

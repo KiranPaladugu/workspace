@@ -3,4 +3,10 @@
  <plugin-type>Add-on</plugin-type>
  <activatorMethod>startUIPlugin</activatorMethod>
  <deactivatorMethod>stopPlugin</deactivatorMethod>
+  <resources>
+        <resource>
+            <resource-name>HelloMessage</resource-name>
+            <local-name>MessagetoSendOnConnection.txt</local-name>
+        </resource>
+    </resources>
 </plugin>

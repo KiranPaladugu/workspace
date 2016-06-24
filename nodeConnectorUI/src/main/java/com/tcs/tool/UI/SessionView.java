@@ -7,6 +7,8 @@ import java.awt.GridLayout;
 
 import javax.swing.JSeparator;
 
+import com.tcs.tools.UI.utils.LayoutUtils;
+
 public class SessionView extends ControlPanel {
     /**
      * 

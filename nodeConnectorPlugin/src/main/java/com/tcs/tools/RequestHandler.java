@@ -11,6 +11,7 @@ public class RequestHandler implements Runnable {
 
     private SSHConnection connection;
     private BlockingQueue<Message<String>> messageQueue;
+    private Thread t;
 
     /**
      * @param messageQueue
@@ -19,8 +20,11 @@ public class RequestHandler implements Runnable {
     public RequestHandler(SSHConnection connection, BlockingQueue<Message<String>> messageQueue) {
         this.connection = connection;
         this.messageQueue = messageQueue;
-        Thread t = new Thread(this);
+        t = new Thread(this);
         t.setName(connection.getUsername() + "@" + connection.getHostname() + " - " + this.getClass().getSimpleName());
+    }
+
+    public void startHandler() {
         t.start();
     }
 

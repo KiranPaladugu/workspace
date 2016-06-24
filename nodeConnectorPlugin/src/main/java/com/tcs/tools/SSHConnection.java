@@ -108,6 +108,8 @@ public class SSHConnection {
             //            channel.setInputStream(new PipedInputStream(inputPipe));
             //            channel.setOutputStream(new PipedOutputStream(outputPipe));
             //            channel.setInputStream(null);
+            responseHandler = new ResponseHandler(this, responseMessageQueue);
+            requestHandler = new RequestHandler(this, requestMessageQueue);
             initalized = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,8 +167,8 @@ public class SSHConnection {
         try {
             channel.connect();
             if (channel.isConnected()) {
-                responseHandler = new ResponseHandler(this, responseMessageQueue);
-                requestHandler = new RequestHandler(this, requestMessageQueue);
+                responseHandler.startHandler();
+                requestHandler.startHandler();
             }
             new ConnectionWatcher();
 

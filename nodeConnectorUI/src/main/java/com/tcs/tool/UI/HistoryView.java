@@ -10,6 +10,7 @@ import javax.swing.JScrollPane;
 
 import com.tcs.application.*;
 import com.tcs.tools.Message;
+import com.tcs.tools.UI.utils.LayoutUtils;
 import com.tcs.tools.UI.utils.UIConstants;
 
 public class HistoryView extends ControlPanel implements Subscriber {
