@@ -22,6 +22,7 @@ public class HistoryView extends ControlPanel implements Subscriber {
     private ControlPanel panel;
     private LayoutUtils util = LayoutUtils.getUtils("HistoryView");
     private JScrollPane scrollPane;
+    private MessageMap map = MessageMap.getMessageMap();
 
     /**
      * 
@@ -60,7 +61,23 @@ public class HistoryView extends ControlPanel implements Subscriber {
 
     public void addToHistory(String name, Message<?> message) {
         if (message != null) {
-            Component cmp = new HistoryButton(name, message);
+            String id = map.getId((String) message.getMessage());
+            if(id!=null){
+                if(message.isRequest()){
+                    map.put(id, name);
+                }else if(message.isResponse()){
+                    String messageName = map.getName(id);
+                    if(messageName!=null){
+                        name = messageName;
+                    }
+                }
+            }else{
+                if(message.isResponse()){
+                    name = "Async Response";
+                }
+            }
+            boolean error = map.isError((String) message.getMessage());
+            Component cmp = new HistoryButton(name, message,error);
             addHistory(cmp);
         }
     }

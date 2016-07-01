@@ -24,6 +24,7 @@ public class MainWindow extends JFrame implements WindowListener{
      * 
      */
     public MainWindow() {
+        this.setTitle("Node Netconf connector...");
         DatabaseManager saveMessageManager =new DatabaseManager();        
         Application.getApplicationContext().put("SaveManager", saveMessageManager);
         DBListener dbListener = new DBListener();

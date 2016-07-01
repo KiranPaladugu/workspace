@@ -23,7 +23,7 @@ public class SMenuItem extends JMenuItem implements  Subscriber {
             if(event.getSource().equals(this)){
                 return;
             }
-        }
+        }        
     }
 
     public SubscriptionEventDelegator getDelegator() {

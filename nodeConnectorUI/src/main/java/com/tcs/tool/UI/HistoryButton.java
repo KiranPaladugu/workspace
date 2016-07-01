@@ -3,6 +3,7 @@
  ******************************************************************************* */
 package com.tcs.tool.UI;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -19,6 +20,12 @@ public class HistoryButton extends JButton {
      */
     private static final long serialVersionUID = 1L;
     private Message<?> message;
+
+    public HistoryButton(String name, final Message<?> message, boolean error) {
+        this(name, message);
+        if (error)
+            this.setForeground(Color.RED);
+    }
 
     /**
      * 

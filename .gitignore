@@ -1,3 +1,6 @@
 .metadata/
 .recommenders/
 .metadata/
+*.class
+*.snap
+*/target/

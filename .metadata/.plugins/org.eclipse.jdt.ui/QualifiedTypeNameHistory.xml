@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="com.tcs.application.pluign.PluginMethod"/>
 <fullyQualifiedTypeName name="javax.xml.bind.annotation.XmlAttribute"/>
 <fullyQualifiedTypeName name="com.tcs.application.pluign.PluginDeclaredExceptions"/>
@@ -40,24 +39,25 @@
 <fullyQualifiedTypeName name="com.tcs.tools.Request"/>
 <fullyQualifiedTypeName name="com.tcs.application.Plugin"/>
 <fullyQualifiedTypeName name="com.tcs.application.pluign.PluginManager"/>
-<fullyQualifiedTypeName name="java.util.Map"/>
-<fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="java.nio.file.Files"/>
 <fullyQualifiedTypeName name="java.io.FileInputStream"/>
 <fullyQualifiedTypeName name="com.tcs.application.Subscriber"/>
 <fullyQualifiedTypeName name="javax.xml.bind.annotation.XmlRootElement"/>
 <fullyQualifiedTypeName name="javax.xml.bind.annotation.XmlAccessorType"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="javax.xml.bind.annotation.XmlElementWrapper"/>
 <fullyQualifiedTypeName name="javax.xml.bind.annotation.XmlElement"/>
-<fullyQualifiedTypeName name="java.util.List"/>
-<fullyQualifiedTypeName name="com.tcs.application.pluign.PluginResource"/>
 <fullyQualifiedTypeName name="javax.xml.bind.JAXB"/>
 <fullyQualifiedTypeName name="java.io.StringReader"/>
 <fullyQualifiedTypeName name="com.tcs.application.pluign.PluginDataObject"/>
 <fullyQualifiedTypeName name="javax.swing.plaf.synth.SynthSeparatorUI"/>
 <fullyQualifiedTypeName name="java.util.zip.ZipEntry"/>
 <fullyQualifiedTypeName name="com.tcs.application.Application"/>
-<fullyQualifiedTypeName name="com.tcs.application.resolver.ResourceResolver"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
+<fullyQualifiedTypeName name="java.util.Map.Entry"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.tcs.application.resolver.ResourceResolver"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="com.tcs.application.pluign.PluginResource"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
 </qualifiedTypeNameHistroy>
