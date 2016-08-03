@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Encapsulate field &apos;com.tcs.application.pluign.PluginStarter.plugin&apos; in &apos;com.tcs.application.pluign.PluginStarter&apos;&#x0D;&#x0A;- Original project: &apos;application-common&apos;&#x0D;&#x0A;- Original element: &apos;com.tcs.application.pluign.PluginStarter.plugin&apos;&#x0D;&#x0A;- Getter method name: &apos;getPlugin&apos;&#x0D;&#x0A;- Setter method name: &apos;setPlugin&apos;&#x0D;&#x0A;- Field visibility: &apos;public&apos;&#x0D;&#x0A;- Use getter and setter methods in declaring type" comments="false" declaring="true" description="Encapsulate field &apos;plugin&apos;" flags="589830" getter="getPlugin" id="org.eclipse.jdt.ui.self.encapsulate" input="/src\/main\/java&lt;com.tcs.application.pluign{PluginStarter.java[PluginStarter^plugin" insertion="2" setter="setPlugin" stamp="1464049855089" version="1.0" visibility="1"/>
-</session>

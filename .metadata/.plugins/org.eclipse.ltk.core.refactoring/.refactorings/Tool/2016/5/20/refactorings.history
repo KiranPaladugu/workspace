@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Copy element &apos;CommonMouseAdaptor.java&apos; to &apos;JavaTools/src/com.tcs.tools.UI.utils&apos;&#x0D;&#x0A;- Original project: &apos;Tool&apos;&#x0D;&#x0A;- Destination element: &apos;JavaTools/src/com.tcs.tools.UI.utils&apos;&#x0D;&#x0A;- Original element: &apos;com.tcs.pack.search.ui.CommonMouseAdaptor.java&apos;" description="Copy compilation unit" destination="=JavaTools/src&lt;com.tcs.tools.UI.utils" element1="/src&lt;com.tcs.pack.search.ui{CommonMouseAdaptor.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1462993760068" units="1" version="1.0"/>
-</session>

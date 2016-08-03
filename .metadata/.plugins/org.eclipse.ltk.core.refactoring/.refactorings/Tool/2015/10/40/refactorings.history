@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename local variable &apos;dialog&apos; in &apos;com.tcs.pack.utils.WindowUtils.addHideOnEscapeListener(...)&apos; to &apos;frame&apos;&#x0D;&#x0A;- Original project: &apos;Tool&apos;&#x0D;&#x0A;- Original element: &apos;com.tcs.pack.utils.WindowUtils.addHideOnEscapeListener(JFrame).dialog&apos;&#x0D;&#x0A;- Renamed element: &apos;dialog&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename local variable &apos;dialog&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;com.tcs.pack.utils{WindowUtils.java[WindowUtils~addHideOnEscapeListener~QJFrame;@dialog!765!783!778!783!QJFrame;!16!true" name="frame" references="true" stamp="1443745333363" version="1.0"/>
-</session>

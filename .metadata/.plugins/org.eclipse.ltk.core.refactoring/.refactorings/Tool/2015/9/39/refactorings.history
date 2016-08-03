@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename local variable &apos;treeSearchDialog&apos; in &apos;com.tcs.pack.ui.dialogs.TreeSearchDialog.CloseHandler.CloseHandler(...)&apos; to &apos;dialog&apos;&#x0D;&#x0A;- Original project: &apos;Tool&apos;&#x0D;&#x0A;- Original element: &apos;com.tcs.pack.ui.dialogs.TreeSearchDialog.CloseHandler.CloseHandler(JDialog).treeSearchDialog&apos;&#x0D;&#x0A;- Renamed element: &apos;treeSearchDialog&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename local variable &apos;treeSearchDialog&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;com.tcs.pack.ui.dialogs{TreeSearchDialog.java[TreeSearchDialog[CloseHandler~CloseHandler~QJDialog;@treeSearchDialog!1825!1848!1833!1848!QJDialog;!0!true" name="dialog" references="true" stamp="1442792708854" version="1.0"/>
-</session>
