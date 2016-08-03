@@ -1,6 +1,4 @@
-/* ********************************************************************************
- * All rights reserved.
- ******************************************************************************* */
+
 package com.pack.dot;
 
 import java.util.List;
@@ -11,15 +9,12 @@ public class UnlimitedStack<T> {
     private List<T> list;
     private int size;
 
-    /**
-     * 
-     */
     public UnlimitedStack() {
         list = new Vector<T>();
     }
 
     public synchronized boolean push(T object) {
-        boolean flag= false;
+        boolean flag = false;
         if (list.add(object)) {
             size++;
             flag = true;

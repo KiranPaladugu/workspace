@@ -14,14 +14,16 @@ public class XmlNode {
     protected static final String END_CLOSE_TAG = CLOSE_TAG;
     protected static final String INLINE_END_OPEN_TAG = OPEN_TAG;
     protected static final String INLINE_END_CLOSE_TAG = "/>";
+    protected static final char NEW_LINE_CHAR='\n';
+    private static final String EMPTY_STRING="";
 
     private XmlNode parent;
     private List<XmlNode> children = new LinkedList<XmlNode>();
     private Map<String, String> attributes = new LinkedHashMap<String, String>();
     private int level;
-    private String uri = "";
+    private String uri = EMPTY_STRING;
     private String space = "  ";
-    private StringBuffer value = new StringBuffer("");
+    private StringBuffer value = new StringBuffer();
     private boolean isAttribute;
 
     public XmlNode(String name) {
@@ -181,14 +183,14 @@ public class XmlNode {
             final String tab = getSpace();
             for (final XmlNode node : children) {
                 node.setSpace(tab + "  ");
-                str.append('\n');
+                str.append(NEW_LINE_CHAR);
                 str.append(space + node.toXml());
             }
             String s = "";
             if (space.length() > 1) {
                 s = space.substring(0, space.lastIndexOf(' '));
             }
-            str.append('\n' + s);
+            str.append(NEW_LINE_CHAR + s);
         } else {
             str.append(value.toString());
         }
