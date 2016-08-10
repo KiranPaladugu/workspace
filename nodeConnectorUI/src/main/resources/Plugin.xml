@@ -8,5 +8,9 @@
             <resource-name>HelloMessage</resource-name>
             <local-name>MessagetoSendOnConnection.txt</local-name>
         </resource>
+        <resource>
+            <resource-name>PreDisconnectMessage</resource-name>
+            <local-name>MessagesToSendPreDisconnect.txt</local-name>
+        </resource>
     </resources>
 </plugin>

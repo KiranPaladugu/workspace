@@ -4,14 +4,25 @@
 package com.tcs.tool.UI;
 
 import java.awt.GridLayout;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
-import com.tcs.application.*;
+import com.tcs.application.Application;
+import com.tcs.application.Subscriber;
+import com.tcs.application.SubscriptionEvent;
 import com.tcs.tools.Message;
 import com.tcs.tools.Request;
 import com.tcs.tools.UI.utils.LayoutUtils;
@@ -19,255 +30,253 @@ import com.tcs.tools.UI.utils.UIConstants;
 import com.tcs.tools.resources.ResourceLocator;
 
 public class RequestControlView extends ControlPanel implements Subscriber {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    private JComboBox<Object> templet;
-    private DefaultComboBoxModel<Object> model;
-    private Vector<Object> tmplts = new Vector<>();;
-    private JButton send, newMessage, editMessage;
-    private JLabel connectionStatus;
-    private static Message<String> message;
-    private static final String txt_Reset = "RequestControlView.Reset";
-    private ConnectionAnimator animator;
 
-    /**
-     * 
-     */
-    public RequestControlView() {
-        this.setExpandPolicy(HORIZONTAL_FULL);
-        tmplts.add("Select");
-        //        tmplts.add("New");
-        model = new DefaultComboBoxModel<>(tmplts);
-        templet = new JComboBox<>(model);
-        send = new JButton("Send");
-        send.setIcon(ResourceLocator.getImageIcon("send.png"));
-        editMessage = new JButton("Edit");
-        editMessage.setIcon(ResourceLocator.getImageIcon("edit.png"));
-        editMessage.setEnabled(false);
-        editMessage.addActionListener(new ActionListener() {
+	private static final long serialVersionUID = 1L;
+	private final JComboBox<Object> templet;
+	private final DefaultComboBoxModel<Object> model;
+	private final Vector<Object> tmplts = new Vector<>();;
+	private final JButton send, newMessage, editMessage;
+	private final JLabel connectionStatus;
+	private static Message<String> message;
+	private static final String txt_Reset = "RequestControlView.Reset";
+	private ConnectionAnimator animator;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Application.getSubscriptionManager().notifySubscriber(UIConstants.EDIT_SAVED_MESSAGE, e);
-            }
-        });
-        newMessage = new JButton("New");
-        newMessage.setIcon(ResourceLocator.getImageIcon("New.png"));
-        newMessage.addActionListener(new ActionListener() {
+	public RequestControlView() {
+		this.setExpandPolicy(HORIZONTAL_FULL);
+		tmplts.add("Select");
+		// tmplts.add("New");
+		model = new DefaultComboBoxModel<>(tmplts);
+		templet = new JComboBox<>(model);
+		send = new JButton("Send");
+		send.setIcon(ResourceLocator.getImageIcon("send.png"));
+		editMessage = new JButton("Edit");
+		editMessage.setIcon(ResourceLocator.getImageIcon("edit.png"));
+		editMessage.setEnabled(false);
+		editMessage.addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Application.getSubscriptionManager().notifySubscriber(UIConstants.TEMPLET_NEW_COUSTOM_MESSAGE, e);
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Application.getSubscriptionManager().notifySubscriber(UIConstants.EDIT_SAVED_MESSAGE, e);
+			}
+		});
+		newMessage = new JButton("New");
+		newMessage.setIcon(ResourceLocator.getImageIcon("New.png"));
+		newMessage.addActionListener(new ActionListener() {
 
-            }
-        });
-        connectionStatus = new JLabel(ResourceLocator.getImageIcon("Off.png"));
-        connectionStatus.setToolTipText("Offline");
-        send.setEnabled(false);
-        send.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Application.getSubscriptionManager().notifySubscriber(UIConstants.SEND_REQUEST, e.getSource(), message);
-                Application.getSubscriptionManager().notifySubscriber(txt_Reset);
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Application.getSubscriptionManager().notifySubscriber(UIConstants.TEMPLET_NEW_COUSTOM_MESSAGE, e);
 
-            }
-        });
-        //        templet.add
-        templet.addItemListener(new ItemListener() {
+			}
+		});
+		connectionStatus = new JLabel(ResourceLocator.getImageIcon("Off.png"));
+		connectionStatus.setToolTipText("Offline");
+		send.setEnabled(false);
+		send.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Application.getSubscriptionManager().notifySubscriber(UIConstants.SEND_REQUEST, e.getSource(), message);
+				Application.getSubscriptionManager().notifySubscriber(txt_Reset);
 
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                //                if (e.getStateChange() == ItemEvent.SELECTED && templet.getSelectedItem().equals("New"))
-                //                    Application.getSubscriptionManager().notifySubscriber(UIConstants.TEMPLET_NEW_COUSTOM_MESSAGE, e);
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    if (templet.getSelectedItem().equals("Select"))
-                        Application.getSubscriptionManager().notifySubscriber(UIConstants.REQUEST_CANCEL_SEND);
-                    else
-                        Application.getSubscriptionManager().notifySubscriber(UIConstants.MESSAGE_SELECTED, templet,
-                                templet.getSelectedItem());
-                }
-            }
+			}
+		});
+		// templet.add
+		templet.addItemListener(new ItemListener() {
 
-        });
-        Application.getSubscriptionManager().subscribe(this, UIConstants.PREPARE_CONNECT, UIConstants.CONNECTING,
-                UIConstants.CONNECTION_SUCCESS, UIConstants.DICONNECTED, UIConstants.TEMPLET_NEW_COUSTOM_MESSAGE,
-                UIConstants.NEW_REQUEST_OK, UIConstants.NEW_REQUEST, UIConstants.REQUEST_CANCEL_SEND, txt_Reset,
-                UIConstants.EDIT_SAVED_MESSAGE, UIConstants.SAVED_MESSAGES_AS_LIST, UIConstants.MESSAGE_SELECTED,
-                UIConstants.GET_SAVEDMESSAGE_SUCCSS, UIConstants.SAVE_MESSAGE_SUCCESS,UIConstants.SAVED_MESSAGE_DELETE_SUCCESS);
-        this.setLayout(new GridLayout());
-        this.add(LayoutUtils.arrangeComponantsInColoumn(
-                LayoutUtils.arrangeComponantsInColoumn("Templet", templet).setExpandPolicy(ControlPanel.HORIZONTAL_FULL),
-                LayoutUtils
-                        .arrangeComponantsInColoumn(
-                                LayoutUtils.arrangeComponantsInColoumn(true, ControlPanel.BOTH,
-                                        LayoutUtils.arrangeComponantsInRow(true, ControlPanel.HORIZONTAL_FULL, editMessage,
-                                                newMessage),
-                                        send).setExpandPolicy(NONE),
-                                LayoutUtils.arrangeComponantsInColoumn("status", connectionStatus).setExpandPolicy(TEN_PERCENT))
-                        .setExpandPolicy(ControlPanel.TWENTY_PERCENT)));
-        connectionStatus.setSize(18, 18);
-        Application.getSubscriptionManager().notifySubscriber(UIConstants.GET_SAVED_MESSAGES_AS_LIST);
-    }
+			@Override
+			public void itemStateChanged(final ItemEvent e) {
+				// if (e.getStateChange() == ItemEvent.SELECTED && templet.getSelectedItem().equals("New"))
+				// Application.getSubscriptionManager().notifySubscriber(UIConstants.TEMPLET_NEW_COUSTOM_MESSAGE, e);
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					if (templet.getSelectedItem().equals("Select"))
+						Application.getSubscriptionManager().notifySubscriber(UIConstants.REQUEST_CANCEL_SEND);
+					else Application.getSubscriptionManager().notifySubscriber(UIConstants.MESSAGE_SELECTED, templet, templet.getSelectedItem());
+				}
+			}
 
-    public static Message<String> getMessage() {
-        return message;
-    }
+		});
+		Application.getSubscriptionManager().subscribe(this, UIConstants.PREPARE_CONNECT, UIConstants.CONNECTING, UIConstants.CONNECTION_SUCCESS,
+				UIConstants.DICONNECTED, UIConstants.TEMPLET_NEW_COUSTOM_MESSAGE, UIConstants.NEW_REQUEST_OK, UIConstants.NEW_REQUEST,
+				UIConstants.REQUEST_CANCEL_SEND, txt_Reset, UIConstants.EDIT_SAVED_MESSAGE, UIConstants.SAVED_MESSAGES_AS_LIST,
+				UIConstants.MESSAGE_SELECTED, UIConstants.GET_SAVEDMESSAGE_SUCCSS, UIConstants.SAVE_MESSAGE_SUCCESS,
+				UIConstants.SAVED_MESSAGE_DELETE_SUCCESS, UIConstants.PRE_DISCONNECT);
+		this.setLayout(new GridLayout());
+		this.add(
+				LayoutUtils
+						.arrangeComponantsInColoumn(
+								LayoutUtils.arrangeComponantsInColoumn("Templet", templet).setExpandPolicy(ControlPanel.HORIZONTAL_FULL),
+								LayoutUtils
+										.arrangeComponantsInColoumn(
+												LayoutUtils.arrangeComponantsInColoumn(true, ControlPanel.BOTH,
+														LayoutUtils.arrangeComponantsInRow(true, ControlPanel.HORIZONTAL_FULL, editMessage,
+																newMessage),
+														send).setExpandPolicy(NONE),
+												LayoutUtils.arrangeComponantsInColoumn("status", connectionStatus).setExpandPolicy(TEN_PERCENT))
+										.setExpandPolicy(ControlPanel.TWENTY_PERCENT)));
+		connectionStatus.setSize(18, 18);
+		Application.getSubscriptionManager().notifySubscriber(UIConstants.GET_SAVED_MESSAGES_AS_LIST);
+	}
 
-    public static void setMessage(Message<String> msg) {
-        message = msg;
-    }
+	public static Message<String> getMessage() {
+		return message;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.tcs.application.Subscriber#onSubscriptionEvent(com.tcs.application.SubscriptionEvent)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public synchronized void onSubscriptionEvent(SubscriptionEvent event) {
-        Object data = event.getData();
-        switch (event.getEvent()) {
-        case UIConstants.CONNECTION_SUCCESS:
-            if (animator != null) {
-                animator.stopAnimation();
-                animator = null;
-            }
-            connectionStatus.setIcon(ResourceLocator.getImageIcon("On.png"));
-            connectionStatus.setToolTipText("Online");
-            sendOnConnectMessages();
-            Application.getSubscriptionManager().notifySubscriber(txt_Reset);
-            break;
-        case UIConstants.DICONNECTED:
-            if (animator != null) {
-                animator.stopAnimation();
-                animator = null;
-            }
-            connectionStatus.setIcon(ResourceLocator.getImageIcon("Off.png"));
-            connectionStatus.setToolTipText("Offline");
-            break;
-        case UIConstants.PREPARE_CONNECT:
-        case UIConstants.CONNECTING:
-            connectionStatus.setIcon(ResourceLocator.getImageIcon("Wait.png"));
-            //            animator = ConnectionAnimator.startAnimation(connectionStatus, "Wait.png", "Off.png");
-            connectionStatus.setToolTipText("Connection inprogress.....");
-            break;
-        case UIConstants.TEMPLET_NEW_COUSTOM_MESSAGE:
-            Application.getSubscriptionManager().notifySubscriber(UIConstants.NEW_MESSAGE_DIALOG);
-            break;
-        case UIConstants.NEW_REQUEST_OK:
-            message = (Message<String>) event.getData();
-            if (message != null) {
-                this.send.setEnabled(true);
-            }
-            break;
-        case UIConstants.REQUEST_CANCEL_SEND:
-            this.send.setEnabled(false);
-            this.editMessage.setEnabled(false);
-            break;
-        case UIConstants.EDIT_SAVED_MESSAGE:
-            Application.getSubscriptionManager().notifySubscriber(UIConstants.NEW_MESSAGE_DIALOG, templet.getSelectedItem(),
-                    message);
-            break;
-        case txt_Reset:
-            resetView();
-            break;
-        case UIConstants.SAVED_MESSAGES_AS_LIST:
-            if (data != null && data instanceof List<?>) {
-                this.tmplts.addAll((List<?>) data);
-                this.templet.repaint();
-            }
-            break;
-        case UIConstants.MESSAGE_SELECTED:
-            if (data != null && data instanceof MessageMetaData) {
-                Application.getSubscriptionManager().notifySubscriber(UIConstants.GET_SAVED_MESSAGE, null, data);
-            }
-            break;
+	public static void setMessage(final Message<String> msg) {
+		message = msg;
+	}
 
-        case UIConstants.SAVE_MESSAGE_SUCCESS:
-            if (data != null && data instanceof MessageMetaData) {
-                if (!tmplts.contains(data)) {
-                    this.model.addElement(data);
-                    this.templet.repaint();
-                }
-                if (event.getSource() != null && event.getSource() instanceof Message<?>) {
-                    message =  (Message<String>) event.getSource() ;
-                    this.send.setEnabled(true);
-                    this.editMessage.setEnabled(true);
-                }
-            }
-            break;
-        case UIConstants.GET_SAVEDMESSAGE_SUCCSS:
-            if (data != null && data instanceof UISavableMessage<?>) {
-                message = (Message<String>) data;
-                this.send.setEnabled(true);
-                this.editMessage.setEnabled(true);
-            }
-            break;
-        case UIConstants.SAVED_MESSAGE_DELETE_SUCCESS:
-            resetView();
-            if(data!=null && data instanceof MessageMetaData){
-                if(tmplts.contains(data)){
-                    this.model.removeElement(data);
-                }
-            }
-            break;
-        default:
-            System.out.println("Unmanaged Event :" + event.getEvent() + " Caller is " + event.getCaller());
-            break;
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see com.tcs.application.Subscriber#onSubscriptionEvent(com.tcs.application.SubscriptionEvent)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public synchronized void onSubscriptionEvent(final SubscriptionEvent event) {
+		final Object data = event.getData();
+		switch (event.getEvent()) {
+		case UIConstants.CONNECTION_SUCCESS:
+			if (animator != null) {
+				animator.stopAnimation();
+				animator = null;
+			}
+			connectionStatus.setIcon(ResourceLocator.getImageIcon("On.png"));
+			connectionStatus.setToolTipText("Online");
+			sendOnConnectMessages();
+			Application.getSubscriptionManager().notifySubscriber(txt_Reset);
+			break;
+		case UIConstants.PRE_DISCONNECT:
+			sendPreDisConnectMessages();
+			break;
+		case UIConstants.DICONNECTED:
+			if (animator != null) {
+				animator.stopAnimation();
+				animator = null;
+			}
+			connectionStatus.setIcon(ResourceLocator.getImageIcon("Off.png"));
+			connectionStatus.setToolTipText("Offline");
+			break;
+		case UIConstants.PREPARE_CONNECT:
+		case UIConstants.CONNECTING:
+			connectionStatus.setIcon(ResourceLocator.getImageIcon("Wait.png"));
+			// animator = ConnectionAnimator.startAnimation(connectionStatus, "Wait.png", "Off.png");
+			connectionStatus.setToolTipText("Connection inprogress.....");
+			break;
+		case UIConstants.TEMPLET_NEW_COUSTOM_MESSAGE:
+			Application.getSubscriptionManager().notifySubscriber(UIConstants.NEW_MESSAGE_DIALOG);
+			break;
+		case UIConstants.NEW_REQUEST_OK:
+			message = (Message<String>) event.getData();
+			if (message != null) {
+				this.send.setEnabled(true);
+			}
+			break;
+		case UIConstants.REQUEST_CANCEL_SEND:
+			this.send.setEnabled(false);
+			this.editMessage.setEnabled(false);
+			break;
+		case UIConstants.EDIT_SAVED_MESSAGE:
+			Application.getSubscriptionManager().notifySubscriber(UIConstants.NEW_MESSAGE_DIALOG, templet.getSelectedItem(), message);
+			break;
+		case txt_Reset:
+			resetView();
+			break;
+		case UIConstants.SAVED_MESSAGES_AS_LIST:
+			if (data != null && data instanceof List<?>) {
+				this.tmplts.addAll((List<?>) data);
+				this.templet.repaint();
+			}
+			break;
+		case UIConstants.MESSAGE_SELECTED:
+			if (data != null && data instanceof MessageMetaData) {
+				Application.getSubscriptionManager().notifySubscriber(UIConstants.GET_SAVED_MESSAGE, null, data);
+			}
+			break;
 
-    /**
-     * 
-     */
-    private void sendOnConnectMessages() {
-        System.out.println("Load message to send on connection...");
-        InputStream inputStream = Application.getResourceResolver().getResourceAsStream("HelloMessage");
-        if(inputStream!=null){
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            String line = null;
-            try {
-                StringBuffer buffer = new StringBuffer();
-                while((line=reader.readLine())!=null){
-                    if(line.trim().equals("")){
-                        pushRequest(buffer.toString());
-                        buffer = new StringBuffer();
-                    }else{
-                        buffer.append(line+"\n");
-                    }
-                }
-                if(buffer.length()>0){
-                    pushRequest(buffer.toString());
-                }
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        
-    }
+		case UIConstants.SAVE_MESSAGE_SUCCESS:
+			if (data != null && data instanceof MessageMetaData) {
+				if (!tmplts.contains(data)) {
+					this.model.addElement(data);
+					this.templet.repaint();
+				}
+				if (event.getSource() != null && event.getSource() instanceof Message<?>) {
+					message = (Message<String>) event.getSource();
+					this.send.setEnabled(true);
+					this.editMessage.setEnabled(true);
+				}
+			}
+			break;
+		case UIConstants.GET_SAVEDMESSAGE_SUCCSS:
+			if (data != null && data instanceof UISavableMessage<?>) {
+				message = (Message<String>) data;
+				this.send.setEnabled(true);
+				this.editMessage.setEnabled(true);
+			}
+			break;
+		case UIConstants.SAVED_MESSAGE_DELETE_SUCCESS:
+			resetView();
+			if (data != null && data instanceof MessageMetaData) {
+				if (tmplts.contains(data)) {
+					this.model.removeElement(data);
+				}
+			}
+			break;
+		default:
+			System.out.println("Unmanaged Event :" + event.getEvent() + " Caller is " + event.getCaller());
+			break;
+		}
+	}
 
-    /**
-     * 
-     */
-    private void pushRequest(String message) {
-        if(message.length()>0){
-            System.out.println(String.format("Pushing message as request on connect: %s", message));
-            Application.getSubscriptionManager().notifySubscriber(UIConstants.SEND_REQUEST, this, new Request<String>(message));
-        }
-    }
+	private void sendPreDisConnectMessages() {
+		System.out.println("Load messages to send before disconnect.");
+		final InputStream inputStream = Application.getResourceResolver().getResourceAsStream("PreDisconnectMessage");
+		pushMessagesFromStream(inputStream);
+	}
 
-    /**
-     * 
-     */
-    private void resetView() {
-        message = null;
-        templet.setSelectedItem("Select");
-//        this.send.setEnabled(false);
-//        this.editMessage.setEnabled(false);
+	private void sendOnConnectMessages() {
+		System.out.println("Load message to send on connection...");
+		final InputStream inputStream = Application.getResourceResolver().getResourceAsStream("HelloMessage");
+		pushMessagesFromStream(inputStream);
 
-    }
+	}
+
+	private void pushMessagesFromStream(final InputStream inputStream) {
+		if (inputStream != null) {
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			String line = null;
+			try {
+				StringBuffer buffer = new StringBuffer();
+				while ((line = reader.readLine()) != null) {
+					if (line.trim().equals("")) {
+						pushRequest(buffer.toString());
+						buffer = new StringBuffer();
+					} else {
+						buffer.append(line + "\n");
+					}
+				}
+				if (buffer.length() > 0) {
+					pushRequest(buffer.toString());
+				}
+				reader.close();
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void pushRequest(final String message) {
+		if (message.length() > 0) {
+			System.out.println(String.format("Pushing message as request on connect: %s", message));
+			Application.getSubscriptionManager().notifySubscriber(UIConstants.SEND_REQUEST, this, new Request<String>(message));
+		}
+	}
+
+	private void resetView() {
+		message = null;
+		templet.setSelectedItem("Select");
+		// this.send.setEnabled(false);
+		// this.editMessage.setEnabled(false);
+
+	}
 
 }
