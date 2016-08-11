@@ -54,4 +54,12 @@ public class UIConstants {
 	public static final String PRE_DISCONNECT_SUCESS = "preDisconnectionSucess";
 	public static final String PRE_DISCONNECT_FAIL = "preDisconnectionFail";
 	public static final String FORCE_DISCONNECT = "doForceDisconnect";
+	public static final String ADD_NEW_MENU = "addNewJmenu";
+	public static final String NEW_MENU_ADDED = "newMenuAdded";
+	public static final String ADD_NEW_MENU_ITEM = "addNewJmenuItem";
+	public static final String NEW_MENU_ITEM_ADDED = "newMenuItemAdded";
+	public static final String SVC_REQUEST = ".REQUEST";
+	public static final String SVC_RESPONSE = ".OK";
+	public static final String SVC_FAIL = ".FAIL";
+	public static final String SVC_CANCEL = ".CANCEL";
 }

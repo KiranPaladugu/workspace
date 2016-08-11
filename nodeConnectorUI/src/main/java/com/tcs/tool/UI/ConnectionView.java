@@ -35,6 +35,7 @@ public class ConnectionView extends ControlPanel implements Subscriber {
 	private final Vector<String> subsystems = new Vector<>();
 	private final JButton connect, disconnect;
 	private boolean updateConf = false;
+	private boolean updateHosts, updatePorts, updateSubsystems, updateUsernames;
 
 	private void init() {
 		hosts.add("10.170.115.66");
@@ -150,25 +151,30 @@ public class ConnectionView extends ControlPanel implements Subscriber {
 	}
 
 	private void updateInputs() {
-		updateComboBox(hostname, hosts);
-		updateComboBox(port, ports);
-		updateComboBox(subsystem, subsystems);
-		updateComboBox(username, usernames);
+		if (updateComboBox(hostname, hosts)) updateHosts = true;
+		if (updateComboBox(port, ports)) updatePorts = true;
+		if (updateComboBox(subsystem, subsystems)) updateSubsystems = true;
+		if (updateComboBox(username, usernames)) updateUsernames = true;
 	}
 
 	private void writeInputAsconf() {
 		if (updateConf) {
 			final ConfigurationManager confMan = Application.getConfigurationManager();
 			try {
-				confMan.writeStringConfiguration("ConnectorUI_hosts.conf", getListAsData(hosts));
-				confMan.writeStringConfiguration("ConnectorUI_ports.conf", getListAsData(ports));
-				confMan.writeStringConfiguration("ConnectorUI_usernames.conf", getListAsData(usernames));
-				confMan.writeStringConfiguration("ConnectorUI_subsystems.conf", getListAsData(subsystems));
+				if (updateHosts) confMan.writeStringConfiguration("ConnectorUI_hosts.conf", getListAsData(hosts));
+				if (updatePorts) confMan.writeStringConfiguration("ConnectorUI_ports.conf", getListAsData(ports));
+				if (updateUsernames) confMan.writeStringConfiguration("ConnectorUI_usernames.conf", getListAsData(usernames));
+				if (updateSubsystems) confMan.writeStringConfiguration("ConnectorUI_subsystems.conf", getListAsData(subsystems));
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
-			updateConf = false;
+			resetUpdateConfs();
 		}
+	}
+
+	private void resetUpdateConfs() {
+		updateConf = updateHosts = updatePorts = updateUsernames = updateSubsystems = false;
+
 	}
 
 	private String getListAsData(final List<String> list) {
@@ -182,13 +188,15 @@ public class ConnectionView extends ControlPanel implements Subscriber {
 		return buffer.toString();
 	}
 
-	private void updateComboBox(final JComboBox<String> cbx, final Vector<String> vector) {
+	private boolean updateComboBox(final JComboBox<String> cbx, final Vector<String> vector) {
 		final String searchStr = (String) cbx.getModel().getSelectedItem();
 		if (!vector.contains(searchStr.trim())) {
 			((DefaultComboBoxModel<String>) cbx.getModel()).addElement(searchStr.trim());
 			cbx.setSelectedIndex(vector.size() - 1);
 			updateConf = true;
+			return true;
 		}
+		return false;
 	}
 
 	private ConnectionData prepareConnection() {
