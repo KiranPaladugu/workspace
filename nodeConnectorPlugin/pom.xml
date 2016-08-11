@@ -4,16 +4,21 @@
 
 	<groupId>com.tools.plugin</groupId>
 	<artifactId>nodeConnectorPlugin</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>com.tools</groupId>
 			<artifactId>application-common</artifactId>
-			<version>1.0.2-SNAPSHOT</version>
+			<version>1.0.3-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.3pp</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.53</version>
+		</dependency> -->
+		<dependency>
+			<groupId>com.jcraft</groupId>
 			<artifactId>jsch</artifactId>
 			<version>0.1.53</version>
 		</dependency>

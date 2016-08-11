@@ -1,0 +1,16 @@
+<plugin name="XMLTreeView" className="com.tools.plugin.xmltreeviewer.ui.Visualizer" version="1.0.1" id="">
+ <identifier>XMLTreeView</identifier>
+ <plugin-type>Add-on</plugin-type>
+ <activatorMethod>loadPlugin</activatorMethod>
+ <methods>
+ 	<method name="loadPlugin" className="com.tools.plugin.xmltreeviewer.ui.Visualizer"></method>
+	<method name="displayXmlView"  clasName="Visualizer">
+		<inputParams>
+			<param>
+				<paramClass>java.lang.String</paramClass>
+				<param-type>Object</param-type>
+			</param>			
+		</inputParams>
+	</method>
+ </methods>
+</plugin>

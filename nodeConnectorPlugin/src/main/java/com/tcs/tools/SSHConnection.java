@@ -3,341 +3,357 @@
  ******************************************************************************* */
 package com.tcs.tools;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.jcraft.jsch.*;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelSubsystem;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UserInfo;
 import com.tcs.application.BlockingQueue;
+import com.tcs.tools.ConnectionData.ConnectionType;
 
 public class SSHConnection {
-    /**
-     * 
-     */
-    private List<ConnectionListener> listeners = new Vector<ConnectionListener>();
-    public static final String subsystem = "subsystem";
-    public static final int SUBSYSTEM = 1;
-    private int port;
-    private String hostname;
-    private String username;
-    private String password;
-    private String subsystemName;
-    private String endOfSatement = "";
-    private Channel channel;
-    private boolean initalized = false;
-    private RequestHandler requestHandler;
-    private ResponseHandler responseHandler;
-    private Session session;
-    protected int sentMessages;
-    protected int recievedMessage;
-    private int retryCount = 1;
-    private BlockingQueue<Message<String>> requestMessageQueue = new BlockingQueue<Message<String>>(1, "Request Queue");
-    private BlockingQueue<Message<String>> responseMessageQueue = new BlockingQueue<Message<String>>(1, "Response Queue");
+	class ConnectionWatcher extends Thread {
+		private boolean sentConnected = false;
+		private boolean sentDisconnect = false;
+		private final AtomicBoolean flag = new AtomicBoolean(true);
 
-    public int getSentMessages() {
-        return sentMessages;
-    }
+		/**
+		 *
+		 */
+		public ConnectionWatcher() {
+			start();
+		}
 
-    public int getRecievedMessage() {
-        return recievedMessage;
-    }
+		private void notifyListeners(final int eventType) {
+			for (final ConnectionListener listener : listeners) {
+				listener.onConnectionEvent(new ConnectionEvent(channel, eventType));
+			}
+		}
 
-    public void initialize(String hostname, int port, String username) throws Exception {
-        this.username = username;
-        this.hostname = hostname;
-        this.port = port;
-        initialize();
-    }
+		@Override
+		public void run() {
+			while (flag.get()) {
+				if (channel != null) {
+					if (channel.isConnected()) {
+						if (!sentConnected) {
+							sentConnected = true;
+							sentDisconnect = false;
+							notifyListeners(ConnectionEvent.CONNECTED);
+						}
+					} else {
+						if (!sentDisconnect) {
+							sentConnected = false;
+							sentDisconnect = true;
+							flag.set(false);
+							notifyListeners(ConnectionEvent.DISCONNECTED);
+						}
+					}
+					// System.out.println("Session Heart beat Tum tump Alive:" + channel.isConnected());
+				}
+				try {
+					Thread.sleep(5000);
+				} catch (final InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
-    public void initialize(ConnectionData data) throws Exception {
-        this.hostname = data.getHostname();
-        this.port = data.getPort();
-        this.subsystemName = data.getSubsystem();
-        this.username = data.getUsername();
-        this.password = data.getPassword();
-        initialize();
-    }
+	public static final String subsystem = "subsystem";
+	public static final int SUBSYSTEM = 1;
+	/**
+	 *
+	 */
+	private final List<ConnectionListener> listeners = new Vector<ConnectionListener>();
+	private int port;
+	private String hostname;
+	private String username;
+	private String password;
+	private String subsystemName;
+	private final ConnectionType channelType = ConnectionType.subsystem;
+	private String endOfSatement = "";
+	private Channel channel;
+	private boolean initalized = false;
+	private RequestHandler requestHandler;
+	private ResponseHandler responseHandler;
+	private Session session;
+	protected int sentMessages;
+	protected int recievedMessage;
+	private int retryCount = 1;
+	private final BlockingQueue<Message<String>> requestMessageQueue = new BlockingQueue<Message<String>>(1, "Request Queue");
 
-    public void initialize(String hostname, int port, String username, String password) throws Exception {
-        this.password = password;
-        initialize(hostname, port, username);
+	private final BlockingQueue<Message<String>> responseMessageQueue = new BlockingQueue<Message<String>>(1, "Response Queue");
 
-    }
+	public synchronized boolean addConnectionListener(final ConnectionListener listener) {
+		if (!listeners.contains(listener)) {
+			return listeners.add(listener);
+		}
+		return false;
+	}
 
-    public void initialize() throws Exception {
-        validate();
-        JSch sch = new JSch();
-        try {
-            session = sch.getSession(username, hostname, port);
-            if (password != null) {
-                session.setPassword(password);
-            }
-            UserInfo ui = new MyUserInfo() {
-                public void showMessage(String message) {
-                }
+	public synchronized void connect() {
+		if (!initalized) {
+			try {
+				initialize();
+			} catch (final Exception e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		try {
+			channel.connect();
+			if (channel.isConnected()) {
+				responseHandler.startHandler();
+				requestHandler.startHandler();
+			}
+			new ConnectionWatcher();
 
-                public boolean promptYesNo(String message) {
-                    return true;
-                }
-                // If password is not given before the invocation of Session#connect(),
-                // implement also following methods,
-                //   * UserInfo#getPassword(),
-                //   * UserInfo#promptPassword(String message) and
-                //   * UIKeyboardInteractive#promptKeyboardInteractive()
-            };
+		} catch (final JSchException e) {
+			e.printStackTrace();
+		}
+	}
 
-            session.setUserInfo(ui);
-            for (int tryCount = 0; tryCount < retryCount; tryCount++) {
-                try {
-                    session.connect();
-                    break;
-                } catch (Exception ex) {
-                    if (tryCount >= (retryCount - 1)) {
-                        throw ex;
-                    }
-                }
-            }
-            ChannelSubsystem channel = (ChannelSubsystem) session.openChannel("subsystem");
-            channel.setSubsystem(getSubsystemName());
-            //            channel.setPty(true);
-            this.channel = channel;
-            //            channel.setErrStream(System.err);
-            //                        channel.setInputStream(System.in);
-            //                        channel.setOutputStream(System.out);
-            //            channel.setInputStream(new PipedInputStream(inputPipe));
-            //            channel.setOutputStream(new PipedOutputStream(outputPipe));
-            //            channel.setInputStream(null);
-            responseHandler = new ResponseHandler(this, responseMessageQueue);
-            requestHandler = new RequestHandler(this, requestMessageQueue);
-            initalized = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
+	public void disConnect() {
+		channel.disconnect();
+		session.disconnect();
+	}
 
-    /**
-     * 
-     */
-    private void validate() {
-        if (hostname == null || hostname.length() <= 0) {
-            throw new IllegalArgumentException("hostname");
-        }
+	public String getEndOfSatement() {
+		return endOfSatement;
+	}
 
-        if (port <= 0) {
-            throw new IllegalArgumentException("Invalid port number");
-        }
+	public String getHostname() {
+		return hostname;
+	}
 
-        if (username == null || username.length() <= 0) {
-            throw new IllegalArgumentException("username");
-        }
+	public synchronized InputStream getInputStream() throws IOException {
+		return this.channel.getInputStream();
+	}
 
-        if (password == null || password.length() <= 0) {
-            throw new IllegalArgumentException("password");
-        }
-    }
+	public synchronized OutputStream getOutputStream() throws IOException {
+		return this.channel.getOutputStream();
+	}
 
-    public void write(String message) {
-        try {
-            //            inputPipe.write(message.getBytes());
-            requestMessageQueue.insert(new Request<String>(message));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public synchronized InputStream getInputStream() throws IOException {
-        return this.channel.getInputStream();
-    }
+	public int getPort() {
+		return port;
+	}
 
-    public synchronized OutputStream getOutputStream() throws IOException {
-        return this.channel.getOutputStream();
-    }
+	public int getRecievedMessage() {
+		return recievedMessage;
+	}
 
-    public synchronized void connect() {
-        if (!initalized) {
-            try {
-                initialize();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
-            }
-        }
-        try {
-            channel.connect();
-            if (channel.isConnected()) {
-                responseHandler.startHandler();
-                requestHandler.startHandler();
-            }
-            new ConnectionWatcher();
+	public RequestHandler getRequestHandler() {
+		return requestHandler;
+	}
 
-        } catch (JSchException e) {
-            e.printStackTrace();
-        }
-    }
+	public ResponseHandler getResponseHandler() {
+		return responseHandler;
+	}
 
-    public void disConnect() {
-        channel.disconnect();
-        session.disconnect();
-    }
+	public int getRetryCount() {
+		return retryCount;
+	}
 
-    public synchronized void write(Message<String> mesage) {
-        try {
-            requestMessageQueue.insert(mesage);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+	public int getSentMessages() {
+		return sentMessages;
+	}
 
-    public synchronized String read() {
-        //        System.out.println("Read from queue:"+message);
-        try {
-            return responseMessageQueue.remove().getMessage();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+	public String getSubsystemName() {
+		return subsystemName;
+	}
 
-    public boolean isConnected() {
-        return channel.isConnected();
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public void initialize() throws Exception {
+		validate();
+		final JSch sch = new JSch();
+		try {
+			session = sch.getSession(username, hostname, port);
+			if (password != null) {
+				session.setPassword(password);
+			}
+			final UserInfo ui = new MyUserInfo() {
+				@Override
+				public boolean promptYesNo(final String message) {
+					return true;
+				}
+				// If password is not given before the invocation of Session#connect(),
+				// implement also following methods,
+				// * UserInfo#getPassword(),
+				// * UserInfo#promptPassword(String message) and
+				// * UIKeyboardInteractive#promptKeyboardInteractive()
 
-    public void setPort(int port) {
-        this.port = port;
-    }
+				@Override
+				public void showMessage(final String message) {
+				}
+			};
 
-    public String getHostname() {
-        return hostname;
-    }
+			session.setUserInfo(ui);
+			for (int tryCount = 0; tryCount < retryCount; tryCount++) {
+				try {
+					session.connect();
+					break;
+				} catch (final Exception ex) {
+					if (tryCount >= (retryCount - 1)) {
+						throw ex;
+					}
+				}
+			}
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
-    }
+			this.channel = prepareChannel();
+			if (channel == null) {
+				return;
+			}
+			responseHandler = new ResponseHandler(this, responseMessageQueue);
+			requestHandler = new RequestHandler(this, requestMessageQueue);
+			initalized = true;
+		} catch (final Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	private Channel prepareChannel() throws JSchException {
+		switch (channelType) {
+		case subsystem:
+			return prepareSubsystemChannel();
+		case shell:
+			return prepareShellChannel();
+		default:
+			break;
+		}
+		return null;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	private Channel prepareShellChannel() throws JSchException {
+		final ChannelExec channel = (ChannelExec) session.openChannel("exec");
+		return channel;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	private ChannelSubsystem prepareSubsystemChannel() throws JSchException {
+		final ChannelSubsystem channel = (ChannelSubsystem) session.openChannel(channelType.toString());
+		channel.setSubsystem(getSubsystemName());
+		return channel;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public void initialize(final ConnectionData data) throws Exception {
+		this.hostname = data.getHostname();
+		this.port = data.getPort();
+		this.subsystemName = data.getSubsystemName();
+		this.username = data.getUsername();
+		this.password = data.getPassword();
+		initialize();
+	}
 
-    public String getSubsystemName() {
-        return subsystemName;
-    }
+	public boolean isConnected() {
+		return channel.isConnected();
+	}
 
-    public void setSubsystemName(String subsystemName) {
-        this.subsystemName = subsystemName;
-    }
+	public synchronized String read() {
+		// System.out.println("Read from queue:"+message);
+		try {
+			return responseMessageQueue.remove().getMessage();
+		} catch (final InterruptedException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-    public String getEndOfSatement() {
-        return endOfSatement;
-    }
+	public synchronized boolean removeListener(final ConnectionListener listener) {
+		return listeners.remove(listener);
+	}
 
-    public void setEndOfSatement(String endOfSatement) {
-        this.endOfSatement = endOfSatement;
-    }
+	public synchronized void removeListeners() {
+		listeners.clear();
+	}
 
-    public ResponseHandler getResponseHandler() {
-        return responseHandler;
-    }
+	public void setEndOfSatement(final String endOfSatement) {
+		this.endOfSatement = endOfSatement;
+	}
 
-    protected void setResponseHandler(ResponseHandler responseHandler) {
-        this.responseHandler = responseHandler;
-    }
+	public void setHostname(final String hostname) {
+		this.hostname = hostname;
+	}
 
-    public RequestHandler getRequestHandler() {
-        return requestHandler;
-    }
+	public void setPassword(final String password) {
+		this.password = password;
+	}
 
-    protected void setRequestHandler(RequestHandler requestHandler) {
-        this.requestHandler = requestHandler;
-    }
+	public void setPort(final int port) {
+		this.port = port;
+	}
 
-    public int getRetryCount() {
-        return retryCount;
-    }
+	protected void setRequestHandler(final RequestHandler requestHandler) {
+		this.requestHandler = requestHandler;
+	}
 
-    public void setRetryCount(int retryCount) {
-        if (retryCount <= 0) {
-            retryCount = 1;
-        }
-        this.retryCount = retryCount;
-    }
+	protected void setResponseHandler(final ResponseHandler responseHandler) {
+		this.responseHandler = responseHandler;
+	}
 
-    public synchronized boolean addConnectionListener(ConnectionListener listener) {
-        if (!listeners.contains(listener)) {
-            return listeners.add(listener);
-        }
-        return false;
-    }
+	public void setRetryCount(int retryCount) {
+		if (retryCount <= 0) {
+			retryCount = 1;
+		}
+		this.retryCount = retryCount;
+	}
 
-    public synchronized void removeListeners() {
-        listeners.clear();
-    }
+	private void setSubsystemName(final String subsystemName) {
+		this.subsystemName = subsystemName;
+	}
 
-    public synchronized boolean removeListener(ConnectionListener listener) {
-        return listeners.remove(listener);
-    }
+	public void setUsername(final String username) {
+		this.username = username;
+	}
 
-    class ConnectionWatcher extends Thread {
-        private boolean sentConnected = false;
-        private boolean sentDisconnect = false;
-        private AtomicBoolean flag = new AtomicBoolean(true);
+	private void validate() {
+		if (hostname == null || hostname.length() <= 0) {
+			throw new IllegalArgumentException("hostname");
+		}
 
-        /**
-         * 
-         */
-        public ConnectionWatcher() {
-            start();
-        }
+		if (port <= 0) {
+			throw new IllegalArgumentException("Invalid port number");
+		}
 
-        public void run() {
-            while (flag.get()) {
-                if (channel != null) {
-                    if (channel.isConnected()) {
-                        if (!sentConnected) {
-                            sentConnected = true;
-                            sentDisconnect = false;
-                            notifyListeners(ConnectionEvent.CONNECTED);
-                        }
-                    } else {
-                        if (!sentDisconnect) {
-                            sentConnected = false;
-                            sentDisconnect = true;
-                            flag.set(false);
-                            notifyListeners(ConnectionEvent.DISCONNECTED);
-                        }
-                    }
-                    //                    System.out.println("Session Heart beat Tum tump Alive:" + channel.isConnected());
-                }
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+		if (username == null || username.length() <= 0) {
+			throw new IllegalArgumentException("username");
+		}
 
-        private void notifyListeners(int eventType) {
-            for (ConnectionListener listener : listeners) {
-                listener.onConnectionEvent(new ConnectionEvent(channel, eventType));
-            }
-        }
-    }
+		if (password == null || password.length() <= 0) {
+			throw new IllegalArgumentException("password");
+		}
+	}
+
+	public synchronized void write(final Message<String> mesage) {
+		try {
+			requestMessageQueue.insert(mesage);
+		} catch (final InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void write(final String message) {
+		try {
+			// inputPipe.write(message.getBytes());
+			requestMessageQueue.insert(new Request<String>(message));
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

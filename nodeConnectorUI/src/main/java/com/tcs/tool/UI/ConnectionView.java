@@ -6,14 +6,20 @@ package com.tcs.tool.UI;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 
 import com.tcs.application.Application;
 import com.tcs.application.Subscriber;
 import com.tcs.application.SubscriptionEvent;
+import com.tcs.application.conf.ConfigurationManager;
 import com.tcs.tools.ConnectionData;
 import com.tcs.tools.UI.utils.LayoutUtils;
 import com.tcs.tools.UI.utils.UIConstants;
@@ -22,15 +28,54 @@ import com.tcs.tools.resources.ResourceLocator;
 public class ConnectionView extends ControlPanel implements Subscriber {
 
 	private static final long serialVersionUID = 1L;
-	private final JTextField hostname, port, subsystem, username;
+	private final JComboBox<String> hostname, port, subsystem, username;
+	private final Vector<String> hosts = new Vector<>();
+	private final Vector<String> usernames = new Vector<>();
+	private final Vector<String> ports = new Vector<>();
+	private final Vector<String> subsystems = new Vector<>();
 	private final JButton connect, disconnect;
+	private boolean updateConf = false;
+
+	private void init() {
+		hosts.add("10.170.115.66");
+		ports.add("830");
+		usernames.add("test");
+		subsystems.addAll(Arrays.asList(new String[] { "netconf-ecim", "netconf-yang" }));
+		try {
+			final ConfigurationManager confMan = Application.getConfigurationManager();
+			updateList(hosts, ConfigurationManager.linesAsList(confMan.getConfigurationAsString("ConnectorUI_hosts.conf")));
+			updateList(ports, ConfigurationManager.linesAsList(confMan.getConfigurationAsString("ConnectorUI_ports.conf")));
+			updateList(usernames, ConfigurationManager.linesAsList(confMan.getConfigurationAsString("ConnectorUI_usernames.conf")));
+			updateList(subsystems, ConfigurationManager.linesAsList(confMan.getConfigurationAsString("ConnectorUI_subsystems.conf")));
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void updateList(final List<String> toUpdate, final List<String> from) {
+		if (from == null || from.isEmpty()) {
+			return;
+		}
+		for (final String str : from) {
+			if (toUpdate.contains(str)) {
+				continue;
+			}
+			toUpdate.add(str);
+		}
+	}
 
 	public ConnectionView() {
+		init();
 		this.setExpandPolicy(HORIZONTAL_FULL);
-		hostname = new JTextField("10.170.115.66");
-		port = new JTextField("830");
-		subsystem = new JTextField("netconf-ecim");
-		username = new JTextField("test");
+		hostname = new JComboBox<>(new DefaultComboBoxModel<String>(hosts));
+		hostname.setEditable(true);
+		port = new JComboBox<>(new DefaultComboBoxModel<String>(ports));
+		port.setEditable(true);
+		subsystem = new JComboBox<>(new DefaultComboBoxModel<String>(subsystems));
+		subsystem.setEditable(true);
+		username = new JComboBox<>(new DefaultComboBoxModel<String>(usernames));
+		username.setEditable(true);
+
 		connect = new JButton("Connect");
 		connect.setIcon(ResourceLocator.getImageIcon("Connect.png"));
 		connect.addActionListener(new ActionListener() {
@@ -75,9 +120,11 @@ public class ConnectionView extends ControlPanel implements Subscriber {
 	public void onSubscriptionEvent(final SubscriptionEvent event) {
 		switch (event.getEvent()) {
 		case UIConstants.PREPARE_CONNECT:
+			updateInputs();
 			if (validateInput()) {
 				final ConnectionData data = prepareConnection();
 				Application.getSubscriptionManager().notifySubscriber(UIConstants.DO_CONNECTION, this, data);
+				writeInputAsconf();
 			} else {
 				JOptionPane.showMessageDialog(this, "Invalid Input", "Error in validation", JOptionPane.ERROR_MESSAGE);
 				break;
@@ -102,24 +149,66 @@ public class ConnectionView extends ControlPanel implements Subscriber {
 
 	}
 
+	private void updateInputs() {
+		updateComboBox(hostname, hosts);
+		updateComboBox(port, ports);
+		updateComboBox(subsystem, subsystems);
+		updateComboBox(username, usernames);
+	}
+
+	private void writeInputAsconf() {
+		if (updateConf) {
+			final ConfigurationManager confMan = Application.getConfigurationManager();
+			try {
+				confMan.writeStringConfiguration("ConnectorUI_hosts.conf", getListAsData(hosts));
+				confMan.writeStringConfiguration("ConnectorUI_ports.conf", getListAsData(ports));
+				confMan.writeStringConfiguration("ConnectorUI_usernames.conf", getListAsData(usernames));
+				confMan.writeStringConfiguration("ConnectorUI_subsystems.conf", getListAsData(subsystems));
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+			updateConf = false;
+		}
+	}
+
+	private String getListAsData(final List<String> list) {
+		if (list.isEmpty()) {
+			return null;
+		}
+		final StringBuffer buffer = new StringBuffer();
+		for (final String str : list) {
+			buffer.append(str + "\n");
+		}
+		return buffer.toString();
+	}
+
+	private void updateComboBox(final JComboBox<String> cbx, final Vector<String> vector) {
+		final String searchStr = (String) cbx.getModel().getSelectedItem();
+		if (!vector.contains(searchStr.trim())) {
+			((DefaultComboBoxModel<String>) cbx.getModel()).addElement(searchStr.trim());
+			cbx.setSelectedIndex(vector.size() - 1);
+			updateConf = true;
+		}
+	}
+
 	private ConnectionData prepareConnection() {
 		final ConnectionData data = new ConnectionData();
-		data.setHostname(hostname.getText().trim());
-		data.setPort(Integer.parseInt(port.getText().trim()));
-		data.setSubsystem(subsystem.getText().trim());
-		data.setUsername(username.getText().trim());
+		data.setHostname(((String) hostname.getSelectedItem()).trim());
+		data.setPort(Integer.parseInt(((String) port.getSelectedItem()).trim()));
+		data.setSubsystemName(((String) subsystem.getSelectedItem()).trim());
+		data.setUsername(((String) username.getSelectedItem()).trim());
 		data.setPassword(data.getUsername());
 		return data;
 	}
 
 	private boolean validateInput() {
 		boolean flag = true;
-		if (hostname.getText().trim().length() < 1 || port.getText().trim().length() < 1 || username.getText().trim().length() < 1
-				|| subsystem.getText().trim().length() < 1) {
+		if (hostname.getSelectedIndex() == -1 || port.getSelectedIndex() == -1 || username.getSelectedIndex() == -1
+				|| subsystem.getSelectedIndex() == -1) {
 			flag = false;
 		}
 		try {
-			Integer.parseInt(port.getText());
+			Integer.parseInt((String) port.getSelectedItem());
 		} catch (final Exception e) {
 			flag = false;
 		}
