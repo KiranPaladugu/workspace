@@ -1,5 +1,5 @@
-<plugin name="XMLTreeView" className="com.tools.plugin.xmltreeviewer.ui.Visualizer" version="1.0.1" id="">
- <identifier>XMLTreeView</identifier>
+<plugin name="XMLTreeView" className="com.tools.plugin.xmltreeviewer.ui.Visualizer" version="1.0.0" id="0b8b7ee5-1473-333e-94ae-542435e0fbe9">
+ <identifier>76a02ae8-afda-332c-98f6-a9c49338d59e</identifier>
  <plugin-type>Add-on</plugin-type>
  <activatorMethod>loadPlugin</activatorMethod>
  <methods>

@@ -9,11 +9,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 
+import com.tcs.application.AbstractPlugin;
 import com.tcs.application.Application;
 import com.tcs.application.Subscriber;
 import com.tcs.application.SubscriptionEvent;
 
-public class Visualizer implements Subscriber {
+public class Visualizer extends AbstractPlugin implements Subscriber {
 	public static final String MESSAGE_DISPLAY_POPUP_ADD_MENU = "messageDisplayPopupAddMenu";
 	private static MainWindow window = new MainWindow();
 	private final Visualizer visual;
