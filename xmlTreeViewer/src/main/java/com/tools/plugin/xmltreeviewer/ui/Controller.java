@@ -75,6 +75,35 @@ public class Controller extends ControlPanel implements ActionListener {
 				}
 			}
 		});
+		this.load.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String fileName = (String) input.getSelectedItem();
+				if(fileName!=null && fileName.trim().length()>0){
+					File fileToLoad = new File(fileName);
+					if(fileToLoad.exists() && fileToLoad.isFile()){
+						final XMLTreeView navigator = (XMLTreeView) ApplicationContext.getObject(Application.NAVIGATOR);
+						final NodeView nodeView = (NodeView) ApplicationContext.getObject(Application.NODEVIEW);
+						final SimpleSaxXmlParser parser = new SimpleSaxXmlParser();
+						final boolean status = parser.parse(fileToLoad);
+						if (status) {
+							navigator.visualizeTree(parser.getNodeModel());
+							nodeView.visualize(navigator.getRootXmlElement());
+						} else {
+							final Message message = ApplicationContext.getErrorMessageFromQueue();
+							JOptionPane.showMessageDialog(null, "Opearion Failed\n" + ((Exception) message.getPayLoad()).getMessage(), "FATAL ERROR!",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					}else{
+						
+						JOptionPane.showMessageDialog(null, "Can not load file..", "ERROR!",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				
+			}
+		});
 		this.add(LayoutUtils
 				.arrangeComponantsInColoumn(false, HORIZONTAL_FULL,
 						LayoutUtils.arrangeComponantsInColoumn(browse, LayoutUtils.arrangeComponantsInColoumn(input)),
