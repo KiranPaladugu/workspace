@@ -10,6 +10,9 @@ import java.util.Set;
 import com.tcs.tools.api.YangCardinality;
 import com.tcs.tools.api.YangMember;
 import com.tcs.tools.api.YangTree;
+import com.test.xpath.api.TreeObject;
+import com.test.xpath.api.XPathContext;
+import com.test.xpath.api.XPathObject;
 
 public class Member implements YangMember {
 	private String name;
@@ -101,7 +104,7 @@ public class Member implements YangMember {
 		this.cardinality.put(member, cardinality);
 	}
 
-	public boolean addMember(YangMember member) {
+	public boolean addMember(YangMember member){
 		boolean add = false;
 		if (this.members == null) {
 			add = true;
@@ -127,7 +130,7 @@ public class Member implements YangMember {
 			membersMap.put(member.getName(), member);
 			return true;
 		}
-		return false;
+		throw new NotAMemberException(String.format("The Element [%s] is not a member of [%s]", member.getName(),this.getName()));
 	}
 
 	public boolean removeMember(YangMember member) {
@@ -192,5 +195,70 @@ public class Member implements YangMember {
 	public void setIndent(String indent) {
 		this.indent = indent;
 	}
+
+    @Override
+    public YangMember getNext() {
+        return null;
+    }
+
+    @Override
+    public YangMember getPrevious() {
+        return null;
+    }
+
+    @Override
+    public String getType() {
+        return null;
+    }
+
+    @Override
+    public String evaluate(String var) {
+        return null;
+    }
+
+    @Override
+    public String getPath() {
+        return null;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return false;
+    }
+
+    @Override
+    public boolean hasPrevious() {
+        return false;
+    }
+
+    @Override
+    public boolean hasParent() {
+        return false;
+    }
+
+    @Override
+    public boolean hasChildren() {
+        return !membersMap.isEmpty();
+    }
+
+    @Override
+    public YangMember findPathObject(String xpath) {
+        return null;
+    }
+
+    @Override
+    public boolean validatePath(String xpath) {
+        return false;
+    }
+
+    @Override
+    public XPathContext getContext() {
+        return null;
+    }
+
+    @Override
+    public boolean isParent() {
+        return false;
+    }
 
 }

@@ -35,7 +35,8 @@ public class ZombitAntidote {
             printArray(list);
             if (found != null) {
                 startFrom = found[1];
-                System.out.println("* Found next available Best schedule: [" + found[0] + "," + found[1] + "]");
+                System.out.println("* Found next available Best schedule: [" + found[0] + ","
+                        + found[1] + "]");
                 bestmeetings.add(found);
             }
         } while (found != null);
@@ -77,11 +78,11 @@ public class ZombitAntidote {
                 }
             }
         }
-        //        currentStart = bestAvailable_end;
+        // currentStart = bestAvailable_end;
         if (index != -1) {
             int from = index + 1;
             int to = list.size();
-            //            System.out.println("cut list from " + (from + 1) + " to " + to);
+            // System.out.println("cut list from " + (from + 1) + " to " + to);
             if (from <= to)
                 output.addAll(list.subList(from, to));
             return list.get(index);
@@ -97,10 +98,26 @@ public class ZombitAntidote {
     }
 
     public static void main(String[] args) {
+        
+
+        String input = "[[3,5],[0, 1],[3,6],[6,7],[5,6],[5,7],[4,5],[4,5], [1, 2], [2, 3], [3,7], [4, 7], [5,7],[10,11]]";
+        // String input = "[[0, 1000000], [42, 43], [0, 1000000], [42,
+        // 43],[40,42]]";
+
+        int[][] genArray = gernerateInputArray();
+//        int[][] genArray = generateArrayFromInput(input);
+         printArray(genArray);
+        int num = answser(genArray);
+        System.out.println("best Meeting count = " + num);
+        System.out.println("meetings:" + arrayCount);
+        System.out.println("ITR:" + count);
+    }
+
+    private static int[][] gernerateInputArray() {
         int limit = 20;
         int size = getFactorSum(limit - 1);
         int x[][] = new int[size * 3][2];
-        //        Random start = new Random(10);
+        // Random start = new Random(10);
         int index = 0;
         for (int i = 0; i <= limit; i++) {
             int k = i + 1;
@@ -116,25 +133,7 @@ public class ZombitAntidote {
                 j++;
             }
         }
-
-        List<int[]> list = Arrays.asList(x);
-        //        Collections.sort(list, arrayComparator);
-        System.out.println("Printing generated Schedule array");
-        printArray(list);
-        System.out.println();
-
-        //        int num = answser(x);
-        //        System.out.println("best Meeting count = " + num);
-        printArray(x);
-        //        String input = "[[3,5],[0, 1],[3,6],[6,7],[5,6],[5,7],[4,5],[4,5], [1, 2], [2, 3], [3,7], [4, 7], [5,7],[10,11]]";
-        String input = "[[0, 1000000], [42, 43], [0, 1000000], [42, 43],[40,42]]";
-        //        System.out.println("Input String:" + input);
-        int[][] genArray = generateArrayFromInput(input);
-        //        printArray(genArray);
-        int num = answser(x);
-        System.out.println("best Meeting count = " + num);
-        System.out.println("meetings:" + arrayCount);
-        System.out.println("ITR:" + count);
+        return x;
     }
 
     private static void printArray(List<int[]> list) {
@@ -166,14 +165,15 @@ public class ZombitAntidote {
      * Generates 2D integer array from input string.
      * 
      * @param input
-     *            should be formatted. Ex [[0, 1], [1, 2], [2, 3], [3, 5], [4, 5]]
+     *            should be formatted. Ex [[0, 1], [1, 2], [2, 3], [3, 5], [4,
+     *            5]]
      * @return
      */
     private static int[][] generateArrayFromInput(String input) {
         String open = "[";
         String close = "]";
         String separator = ",";
-        //        char arry[] =input.trim().toCharArray();
+        // char arry[] =input.trim().toCharArray();
         int oneDStart = input.indexOf(open);
         if (oneDStart != -1) {
             int oneDend = input.lastIndexOf(close);
@@ -187,11 +187,13 @@ public class ZombitAntidote {
                     for (String single : singles) {
                         int start = single.indexOf(open);
                         if (start != -1) {
-                            intArray[index][0] = Integer.parseInt(single.substring(start + 1).trim());
+                            intArray[index][0] = Integer
+                                    .parseInt(single.substring(start + 1).trim());
                         } else {
                             int end = single.indexOf(close);
                             if (end != -1) {
-                                intArray[index][1] = Integer.parseInt(single.substring(0, end).trim());
+                                intArray[index][1] = Integer
+                                        .parseInt(single.substring(0, end).trim());
                             } else
                                 intArray[index][1] = Integer.parseInt(single.trim());
                         }

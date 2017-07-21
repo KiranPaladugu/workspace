@@ -146,11 +146,11 @@ public class YangMemberFactory {
 		}
 	}
 	
-	public static YangMember createNewYangMember(String memberName){
+	public static YangMember createNewYangMember(String memberName) throws UnknownYangElementException{
 		return createNewYangMember(memberName, null );
 	}
 
-	public static YangMember createNewYangMember(String memberName , Object value){
+	public static YangMember createNewYangMember(String memberName , Object value) throws UnknownYangElementException{
 		if(factory.canCreateMember(memberName)){
 			Member member = new Member();
 			member.setValue(value);
@@ -175,6 +175,7 @@ public class YangMemberFactory {
 			}
 			return member;
 		}
-		return null;
+		
+		throw new UnknownYangElementException(String.format("Element [%s] is unknown", memberName));
 	}
 }
